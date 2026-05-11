@@ -37,6 +37,9 @@ async function parseFileWithClaude(fileData, fileType) {
     if(!res.ok){console.error("API error:",res.status);return [];}
     const data=await res.json();
     console.log("API response:",JSON.stringify(data).slice(0,500));
+    if(data.stop_reason&&data.stop_reason!=="end_turn"){
+      showToast("AI stopped early: "+data.stop_reason,T.amber);
+    }
     const raw=(data.text||"[]");
     // Strip any markdown code fences
     const stripped=raw.replace(/```json/gi,"").replace(/```/g,"").trim();
