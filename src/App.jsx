@@ -26,24 +26,17 @@ async function parseFileWithClaude(fileData, fileType) {
   const controller=new AbortController();
   const timeout=setTimeout(()=>controller.abort(),30000);
 
-  // On localhost: call Anthropic directly (Vite dev server proxies it to avoid CORS)
-  // On Netlify:   call the serverless function that holds the API key server-side
-  const isLocal=window.location.hostname==="localhost"||window.location.hostname==="127.0.0.1";
-  const url=isLocal?"/api/anthropic":"/.netlify/functions/claude";
-  const body=isLocal
-    ? JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:1500,messages:[{role:"user",content:msgContent}]})
-    : JSON.stringify({content:msgContent});
-
   try{
-    const res=await fetch(url,{method:"POST",signal:controller.signal,headers:{"Content-Type":"application/json"},body});
+    const res=await fetch("/.netlify/functions/claude",{
+      method:"POST",
+      signal:controller.signal,
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({content:msgContent})
+    });
     clearTimeout(timeout);
     if(!res.ok){console.error("API error:",res.status);return [];}
     const data=await res.json();
-    // Netlify function returns {text}, direct call returns {content:[{text}]}
-    const raw=isLocal
-      ? (data.content?.map(b=>b.text||"").join("")||"[]")
-      : (data.text||"[]");
-    const text=raw.replace(/```json|```/g,"").trim();
+    const text=(data.text||"[]").replace(/```json|```/g,"").trim();
     const match=text.match(/\[[\s\S]*\]/);
     if(!match)return [];
     return JSON.parse(match[0]);
