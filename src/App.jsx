@@ -251,7 +251,6 @@ function PricingSection({vendor,update,showToast,log}){
   const products=vendor.products||[];
 
   async function runParse(file){
-    // Guard: only allow PDF/image files under 10MB
     if(file.size>10*1024*1024){showToast("File too large — max 10MB",T.amber);return;}
     const allowed=["application/pdf","image/png","image/jpeg","image/jpg","image/webp"];
     if(!allowed.includes(file.type)&&!file.type.startsWith("image/")){showToast("Please upload a PDF or image file",T.amber);return;}
@@ -259,24 +258,25 @@ function PricingSection({vendor,update,showToast,log}){
     setMode("list");
     showToast("AI is reading the pricing sheet...",T.accent);
     try{
-      // Wrap FileReader in a Promise so async errors are properly caught
       const b64=await new Promise((resolve,reject)=>{
         const reader=new FileReader();
         reader.onload=ev=>resolve(ev.target.result.split(",")[1]);
         reader.onerror=()=>reject(new Error("Failed to read file"));
         reader.readAsDataURL(file);
       });
+      showToast("File read OK — calling AI...",T.accent);
       const parsed=await parseFileWithClaude(b64,file.type);
+      showToast("AI returned "+parsed.length+" products",T.accent);
       if(Array.isArray(parsed)&&parsed.length>0){
         setPreview(parsed.map(p=>({...p,_id:uid(),_keep:true})));
         setMode("preview");
         showToast("Found "+parsed.length+" products — review before saving",T.purple);
       } else {
-        showToast("No products found — try a clearer image or add manually",T.amber);
+        showToast("AI returned empty — check console for details",T.amber);
       }
     }catch(err){
       console.error("Parse error:",err);
-      showToast("Could not read file — try a different format",T.red);
+      showToast("Error: "+err.message,T.red);
     }finally{
       setParsing(false);
     }
