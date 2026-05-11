@@ -1,7 +1,3 @@
-// netlify/functions/claude.js
-// Keeps your Anthropic API key safe on the server — never exposed to the browser.
-// Set ANTHROPIC_API_KEY in Netlify → Site config → Environment variables
-
 export default async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, {
@@ -54,22 +50,31 @@ export default async (req) => {
       },
       body: JSON.stringify({
         model: "claude-sonnet-4-20250514",
-        max_tokens: 4096,
+        max_tokens: 8096,
         messages: [{ role: "user", content }],
       }),
     });
 
     const data = await res.json();
 
+    // Log for debugging
+    console.log("API status:", res.status);
+    console.log("Stop reason:", data.stop_reason);
+    console.log("Response length:", JSON.stringify(data).length);
+
     if (!res.ok) {
-      return new Response(JSON.stringify({ error: data?.error?.message || "API error", full: data }), {
+      console.log("API error:", JSON.stringify(data));
+      return new Response(JSON.stringify({ error: data?.error?.message || "API error" }), {
         status: res.status,
         headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
       });
     }
 
     const text = data.content?.map((b) => b.text || "").join("") || "[]";
-    return new Response(JSON.stringify({ text }), {
+    console.log("Text length:", text.length);
+    console.log("Text preview:", text.slice(0, 200));
+
+    return new Response(JSON.stringify({ text, stop_reason: data.stop_reason }), {
       status: 200,
       headers: {
         "Content-Type": "application/json",
@@ -77,6 +82,7 @@ export default async (req) => {
       },
     });
   } catch (err) {
+    console.log("Fetch error:", err.message);
     return new Response(JSON.stringify({ error: err.message }), {
       status: 500,
       headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
