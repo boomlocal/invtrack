@@ -36,10 +36,37 @@ async function parseFileWithClaude(fileData, fileType) {
     clearTimeout(timeout);
     if(!res.ok){console.error("API error:",res.status);return [];}
     const data=await res.json();
-    const text=(data.text||"[]").replace(/```json|```/g,"").trim();
-    const match=text.match(/\[[\s\S]*\]/);
-    if(!match)return [];
-    return JSON.parse(match[0]);
+    console.log("API response:",JSON.stringify(data).slice(0,500));
+    const raw=(data.text||"[]");
+    // Strip any markdown code fences
+    const stripped=raw.replace(/```json/gi,"").replace(/```/g,"").trim();
+    // Try direct parse first
+    try{return JSON.parse(stripped);}catch{}
+    // Try to extract array from anywhere in the text
+    const match=stripped.match(/\[[\s\S]*\]/);
+    if(match){
+      try{return JSON.parse(match[0]);}catch(e){
+        // Array found but malformed - try to fix truncation
+        console.error("Parse error:",e.message);
+      }
+    }
+    // Try line by line extraction as last resort
+    const lines=stripped.split("
+");
+    const products=[];
+    let current={};
+    for(const line of lines){
+      const nameMatch=line.match(/"name"\s*:\s*"([^"]+)"/);
+      const skuMatch=line.match(/"sku"\s*:\s*"([^"]+)"/);
+      const priceMatch=line.match(/"price"\s*:\s*([\d.]+)/);
+      const strengthMatch=line.match(/"strength"\s*:\s*"([^"]+)"/);
+      if(nameMatch)current.name=nameMatch[1];
+      if(skuMatch)current.sku=skuMatch[1];
+      if(priceMatch)current.price=parseFloat(priceMatch[1]);
+      if(strengthMatch){current.strength=strengthMatch[1];if(current.name){products.push({...current});current={};}}
+    }
+    if(products.length>0)return products;
+    return [];
   }catch(err){
     clearTimeout(timeout);
     console.error("Claude API error:",err);
