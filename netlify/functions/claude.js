@@ -21,8 +21,8 @@ export default async (req) => {
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) {
     return new Response(
-      JSON.stringify({ error: "ANTHROPIC_API_KEY not configured. Add it in Netlify → Site config → Environment variables." }),
-      { status: 500, headers: { "Content-Type": "application/json" } }
+      JSON.stringify({ error: "ANTHROPIC_API_KEY not configured." }),
+      { status: 500, headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" } }
     );
   }
 
@@ -32,7 +32,7 @@ export default async (req) => {
   } catch {
     return new Response(JSON.stringify({ error: "Invalid request body" }), {
       status: 400,
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
     });
   }
 
@@ -40,7 +40,7 @@ export default async (req) => {
   if (!content) {
     return new Response(JSON.stringify({ error: "Missing content field" }), {
       status: 400,
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
     });
   }
 
@@ -54,7 +54,7 @@ export default async (req) => {
       },
       body: JSON.stringify({
         model: "claude-sonnet-4-20250514",
-        max_tokens: 1500,
+        max_tokens: 4096,
         messages: [{ role: "user", content }],
       }),
     });
@@ -62,7 +62,7 @@ export default async (req) => {
     const data = await res.json();
 
     if (!res.ok) {
-      return new Response(JSON.stringify({ error: data?.error?.message || "API error" }), {
+      return new Response(JSON.stringify({ error: data?.error?.message || "API error", full: data }), {
         status: res.status,
         headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
       });
