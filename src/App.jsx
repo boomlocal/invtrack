@@ -253,33 +253,133 @@ function PricingSection({vendor,update,showToast,log}){
   const [parsing,setParsing]=useState(false);
   const products=vendor.products||[];
 
+  // Parse Excel/CSV files directly in the browser — no AI needed, instant and reliable
+  async function parseExcel(file){
+    return new Promise((resolve)=>{
+      const reader=new FileReader();
+      reader.onload=ev=>{
+        try{
+          const XLSX=window.XLSX;
+          if(!XLSX){resolve([]);return;}
+          const data=new Uint8Array(ev.target.result);
+          const wb=XLSX.read(data,{type:"array"});
+          const ws=wb.Sheets[wb.SheetNames[0]];
+          const rows=XLSX.utils.sheet_to_json(ws,{defval:""});
+          if(!rows.length){resolve([]);return;}
+          // Auto-detect columns by trying common header names
+          const keys=Object.keys(rows[0]).map(k=>k.toLowerCase());
+          const findCol=(names)=>Object.keys(rows[0]).find(k=>names.some(n=>k.toLowerCase().includes(n)))||"";
+          const nameCol=findCol(["product_name","product","name","item","description","peptide"]);
+          const skuCol=findCol(["sku","code","abbreviation","abbr","catalog","id"]);
+          const priceCol=findCol(["price_usd","price","cost","rate","unit_price","price_per"]);
+          const strengthCol=findCol(["specification","spec","strength","size","dosage","package"]);
+          const products=rows.map(r=>({
+            name:String(r[nameCol]||"").trim(),
+            sku:String(r[skuCol]||"").trim(),
+            price:parseFloat(String(r[priceCol]||"0").replace(/[^0-9.]/g,""))||0,
+            strength:String(r[strengthCol]||"").trim()
+          })).filter(p=>p.name&&p.name!=="undefined");
+          resolve(products);
+        }catch(e){console.error("Excel parse error:",e);resolve([]);}
+      };
+      reader.onerror=()=>resolve([]);
+      reader.readAsArrayBuffer(file);
+    });
+  }
+
+  async function parseCSV(file){
+    return new Promise((resolve)=>{
+      const reader=new FileReader();
+      reader.onload=ev=>{
+        try{
+          const text=ev.target.result;
+          const lines=text.split("\n").filter(l=>l.trim());
+          if(lines.length<2){resolve([]);return;}
+          const headers=lines[0].split(",").map(h=>h.replace(/"/g,"").trim().toLowerCase());
+          const findIdx=(names)=>headers.findIndex(h=>names.some(n=>h.includes(n)));
+          const nameIdx=findIdx(["product_name","product","name","item","description"]);
+          const skuIdx=findIdx(["sku","code","abbr","catalog","id"]);
+          const priceIdx=findIdx(["price","cost","rate","usd"]);
+          const strengthIdx=findIdx(["spec","strength","size","dosage","package"]);
+          const products=lines.slice(1).map(line=>{
+            const cols=line.split(",").map(c=>c.replace(/"/g,"").trim());
+            return{
+              name:nameIdx>=0?cols[nameIdx]||"":"",
+              sku:skuIdx>=0?cols[skuIdx]||"":"",
+              price:priceIdx>=0?parseFloat(cols[priceIdx])||0:0,
+              strength:strengthIdx>=0?cols[strengthIdx]||"":""
+            };
+          }).filter(p=>p.name);
+          resolve(products);
+        }catch(e){resolve([]);}
+      };
+      reader.onerror=()=>resolve([]);
+      reader.readAsText(file);
+    });
+  }
+
   async function runParse(file){
-    if(file.size>10*1024*1024){showToast("File too large — max 10MB",T.amber);return;}
-    const allowed=["application/pdf","image/png","image/jpeg","image/jpg","image/webp"];
-    if(!allowed.includes(file.type)&&!file.type.startsWith("image/")){showToast("Please upload a PDF or image file",T.amber);return;}
-    setParsing(true);
-    setMode("list");
-    showToast("AI is reading the pricing sheet...",T.accent);
+    if(file.size>20*1024*1024){showToast("File too large — max 20MB",T.amber);return;}
+    setParsing(true);setMode("list");
+    const ext=file.name.split(".").pop().toLowerCase();
+    const isExcel=["xlsx","xls","xlsm"].includes(ext);
+    const isCSV=ext==="csv";
+    const isPDF=file.type==="application/pdf"||ext==="pdf";
+    const isImage=file.type.startsWith("image/")||["png","jpg","jpeg","webp"].includes(ext);
+
     try{
-      const b64=await new Promise((resolve,reject)=>{
-        const reader=new FileReader();
-        reader.onload=ev=>resolve(ev.target.result.split(",")[1]);
-        reader.onerror=()=>reject(new Error("Failed to read file"));
-        reader.readAsDataURL(file);
-      });
-      showToast("File read OK — calling AI...",T.accent);
-      const parsed=await parseFileWithClaude(b64,file.type);
-      showToast("AI returned "+parsed.length+" products",T.accent);
-      if(Array.isArray(parsed)&&parsed.length>0){
-        setPreview(parsed.map(p=>({...p,_id:uid(),_keep:true})));
-        setMode("preview");
-        showToast("Found "+parsed.length+" products — review before saving",T.purple);
-      } else {
-        showToast("AI returned empty — check console for details",T.amber);
+      if(isExcel){
+        showToast("Reading Excel file...",T.accent);
+        // Load SheetJS dynamically if not present
+        if(!window.XLSX){
+          await new Promise((res,rej)=>{
+            const s=document.createElement("script");
+            s.src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js";
+            s.onload=res;s.onerror=rej;
+            document.head.appendChild(s);
+          });
+        }
+        const products=await parseExcel(file);
+        if(products.length>0){
+          setPreview(products.map(p=>({...p,_id:uid(),_keep:true})));
+          setMode("preview");
+          showToast("Found "+products.length+" products from Excel!",T.green);
+        }else{
+          showToast("Could not read Excel — check column headers",T.amber);
+        }
+      }else if(isCSV){
+        showToast("Reading CSV file...",T.accent);
+        const products=await parseCSV(file);
+        if(products.length>0){
+          setPreview(products.map(p=>({...p,_id:uid(),_keep:true})));
+          setMode("preview");
+          showToast("Found "+products.length+" products from CSV!",T.green);
+        }else{
+          showToast("Could not read CSV — check column headers",T.amber);
+        }
+      }else if(isPDF||isImage){
+        showToast("Sending to AI for reading...",T.accent);
+        const b64=await new Promise((resolve,reject)=>{
+          const reader=new FileReader();
+          reader.onload=ev=>resolve(ev.target.result.split(",")[1]);
+          reader.onerror=()=>reject(new Error("Failed to read file"));
+          reader.readAsDataURL(file);
+        });
+        const fileType=isPDF?"application/pdf":file.type||"image/png";
+        const parsed=await parseFileWithClaude(b64,fileType);
+        if(Array.isArray(parsed)&&parsed.length>0){
+          setPreview(parsed.map(p=>({...p,_id:uid(),_keep:true})));
+          setMode("preview");
+          showToast("Found "+parsed.length+" products!",T.purple);
+        }else{
+          showToast("AI could not read file. Try uploading as Excel or CSV instead.",T.amber);
+        }
+      }else{
+        showToast("Unsupported file type. Use Excel, CSV, PDF or image.",T.amber);
       }
     }catch(err){
       console.error("Parse error:",err);
-      showToast("Error: "+err.message,T.red);
+      showToast("Error reading file: "+err.message,T.red);
     }finally{
       setParsing(false);
     }
@@ -323,10 +423,11 @@ function PricingSection({vendor,update,showToast,log}){
 
       {mode==="upload"&&(
         <div style={{padding:20}}>
-          <div onDragOver={e=>{e.preventDefault();setDrag(true);}} onDragLeave={()=>setDrag(false)} onDrop={e=>{e.preventDefault();setDrag(false);const f=e.dataTransfer.files[0];if(f)runParse(f);}} onClick={()=>{const i=document.createElement("input");i.type="file";i.accept=".pdf,.png,.jpg,.jpeg";i.onchange=e=>{const f=e.target.files[0];if(f)runParse(f);};i.click();}} style={{border:`2px dashed ${drag?T.accent:T.borderHi}`,borderRadius:8,padding:"36px 24px",textAlign:"center",cursor:"pointer",background:drag?T.bgCard:T.bg}}>
+          <div onDragOver={e=>{e.preventDefault();setDrag(true);}} onDragLeave={()=>setDrag(false)} onDrop={e=>{e.preventDefault();setDrag(false);const f=e.dataTransfer.files[0];if(f)runParse(f);}} onClick={()=>{const i=document.createElement("input");i.type="file";i.accept=".xlsx,.xls,.csv,.pdf,.png,.jpg,.jpeg,.webp";i.onchange=e=>{const f=e.target.files[0];if(f)runParse(f);};i.click();}} style={{border:`2px dashed ${drag?T.accent:T.borderHi}`,borderRadius:8,padding:"36px 24px",textAlign:"center",cursor:"pointer",background:drag?T.bgCard:T.bg}}>
             <div style={{fontSize:28,marginBottom:10}}>⬆</div>
             <div style={{fontSize:14,color:T.text,marginBottom:6,fontWeight:600}}>Drop your pricing document here</div>
-            <div style={{fontSize:12,color:T.textMid}}>or click to browse · PDF, PNG, JPG</div>
+            <div style={{fontSize:12,color:T.textMid}}>Excel · CSV · PDF · PNG · JPG</div>
+            <div style={{fontSize:11,color:T.green,marginTop:6,fontWeight:600}}>✓ Excel & CSV import instantly — no AI needed</div>
           </div>
           {parsing&&<div style={{marginTop:14,background:T.bgCard,border:`1px solid ${T.borderHi}`,borderRadius:6,padding:"12px 16px",display:"flex",alignItems:"center",gap:12}}><div style={{width:16,height:16,border:"2px solid #7c9be0",borderTopColor:"transparent",borderRadius:"50%",animation:"spin 0.8s linear infinite"}}/><span style={{fontSize:13,color:T.purple,fontWeight:500}}>AI is reading your pricing sheet...</span></div>}
         </div>
