@@ -20,8 +20,8 @@ function generateBarcodeSVG(text, width = 280, height = 80) {
 async function parseFileWithClaude(fileData, fileType) {
   const isImage = fileType.startsWith("image/");
   const msgContent = isImage
-    ? [{type:"image",source:{type:"base64",media_type:fileType,data:fileData}},{type:"text",text:'Extract all product/pricing info from this document. Return ONLY a valid JSON array, no markdown, no explanation. Format: [{"name":"Product Name","sku":"SKU123","price":9.99,"strength":"500mg"}]. If no products found, return [].'}]
-    : [{type:"document",source:{type:"base64",media_type:"application/pdf",data:fileData}},{type:"text",text:'Extract all product/pricing info from this document. Return ONLY a valid JSON array, no markdown, no explanation. Format: [{"name":"Product Name","sku":"SKU123","price":9.99,"strength":"500mg"}]. If no products found, return [].'}];
+    ? [{type:"image",source:{type:"base64",media_type:fileType,data:fileData}},{type:"text",text:'You are a data extraction assistant. Look at this pricing catalog image carefully. Extract EVERY product you can see into a JSON array. Each product needs: name (product name), sku (abbreviation/code), price (number only, no $ sign), strength (dosage/size/specification). Return ONLY the raw JSON array with no markdown, no explanation, no code blocks. Example format: [{"name":"BPC-157","sku":"BP5","price":45,"strength":"5mg*10vials"}]. Extract ALL products visible, even if there are hundreds.'}]
+    : [{type:"document",source:{type:"base64",media_type:"application/pdf",data:fileData}},{type:"text",text:'You are a data extraction assistant. Extract EVERY product from this pricing document. Each product needs: name (product name), sku (abbreviation/code), price (number only, no $ sign), strength (dosage/size/specification). Return ONLY the raw JSON array with no markdown, no explanation, no code blocks. Example format: [{"name":"BPC-157","sku":"BP5","price":45,"strength":"5mg*10vials"}]. Extract ALL products, even if there are hundreds.'}];
 
   const controller=new AbortController();
   const timeout=setTimeout(()=>controller.abort(),30000);
