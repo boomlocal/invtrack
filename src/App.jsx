@@ -51,8 +51,7 @@ async function parseFileWithClaude(fileData, fileType) {
       }
     }
     // Try line by line extraction as last resort
-    const lines=stripped.split("
-");
+    const lines=stripped.split("\n");
     const products=[];
     let current={};
     for(const line of lines){
