@@ -360,7 +360,7 @@ function PricingSection({vendor,update,showToast,log}){
           const products=rows.map(r=>{
             const pName=String(r[nameCol]||"").trim();
             const pStrength=cleanStrength(r[strengthCol]);
-            const fullName=pName&&pStrength?pName+" "+pStrength:pName;
+            const fullName=pName&&pStrength?pName+" - "+pStrength:pName;
             return{
               name:fullName,
               sku:String(r[skuCol]||"").trim(),
@@ -395,7 +395,7 @@ function PricingSection({vendor,update,showToast,log}){
             const rawStr=strengthIdx>=0?cols[strengthIdx]||"":"";
             const cleanedStr=rawStr.split(/[*xX]/)[0].trim().replace(/\s*\d+\s*vials?/i,"").trim();
             const csvName=nameIdx>=0?cols[nameIdx]||"":"";
-            const fullCsvName=csvName&&cleanedStr?csvName+" "+cleanedStr:csvName;
+            const fullCsvName=csvName&&cleanedStr?csvName+" - "+cleanedStr:csvName;
             return{
               name:fullCsvName,
               sku:skuIdx>=0?cols[skuIdx]||"":"",
@@ -739,129 +739,151 @@ function Vendors({store,update,log,showToast}){
 function downloadRFPpdf(rfp, vendor, companyNotes) {
   const date = new Date(rfp.createdAt).toLocaleDateString("en-US",{year:"numeric",month:"long",day:"numeric"});
   const refNum = rfp.id.slice(0,8).toUpperCase();
+
+  // Build table rows — NO pricing, just product info and qty
   const rows = rfp.lines.map((l,i) =>
     `<tr style="background:${i%2===0?"#f8fafc":"#ffffff"}">
-      <td style="padding:10px 14px;border-bottom:1px solid #e2e8f0;font-size:13px;color:#1a202c">${l.productName}</td>
-      <td style="padding:10px 14px;border-bottom:1px solid #e2e8f0;font-size:12px;color:#4a5568;font-family:monospace">${l.sku||"—"}</td>
-      <td style="padding:10px 14px;border-bottom:1px solid #e2e8f0;font-size:12px;color:#4a5568">${l.strength||"—"}</td>
-      <td style="padding:10px 14px;border-bottom:1px solid #e2e8f0;font-size:13px;color:#1a202c;text-align:center;font-weight:600">${l.qty}</td>
-      <td style="padding:10px 14px;border-bottom:1px solid #e2e8f0;font-size:13px;color:#2b6cb0;text-align:right">$${l.unitPrice.toFixed(2)}</td>
-      <td style="padding:10px 14px;border-bottom:1px solid #e2e8f0;font-size:13px;color:#2b6cb0;font-weight:600;text-align:right">$${(l.qty*l.unitPrice).toFixed(2)}</td>
-      <td style="padding:10px 14px;border-bottom:1px solid #e2e8f0;font-size:13px;color:#718096;text-align:right">$____________</td>
+      <td style="padding:11px 14px;border-bottom:1px solid #e2e8f0;font-size:13px;color:#1a202c;font-weight:500">${l.productName}</td>
+      <td style="padding:11px 14px;border-bottom:1px solid #e2e8f0;font-size:12px;color:#4a5568">${l.strength||"—"}</td>
+      <td style="padding:11px 14px;border-bottom:1px solid #e2e8f0;font-size:13px;color:#1a202c;text-align:center;font-weight:600">${l.qty}</td>
+      <td style="padding:11px 14px;border-bottom:1px solid #e2e8f0;font-size:12px;color:#4a5568;text-align:center">${l.vials||10} vials/kit</td>
+      <td style="padding:11px 14px;border-bottom:1px solid #e2e8f0;font-size:13px;color:#718096;text-align:right">$____________</td>
+      <td style="padding:11px 14px;border-bottom:1px solid #e2e8f0;font-size:13px;color:#718096;text-align:right">$____________</td>
     </tr>`
   ).join("");
+
   const html = `<!DOCTYPE html><html><head><meta charset="UTF-8">
   <style>
     *{box-sizing:border-box;margin:0;padding:0;}
-    body{font-family:'Segoe UI',Arial,sans-serif;color:#1a202c;background:#fff;padding:0;}
-    @page{margin:18mm 20mm;}
+    body{font-family:'Segoe UI',Arial,sans-serif;color:#1a202c;background:#fff;}
+    @page{margin:15mm 18mm;}
     @media print{body{padding:0;}}
+    table{border-spacing:0;}
   </style></head><body>
-  <!-- Header Banner -->
-  <div style="background:linear-gradient(135deg,#1a365d 0%,#2b6cb0 100%);padding:28px 36px;margin-bottom:0;">
+
+  <!-- Header -->
+  <div style="background:linear-gradient(135deg,#1a365d 0%,#2b6cb0 100%);padding:24px 32px;">
     <div style="display:flex;justify-content:space-between;align-items:center;">
       <div>
-        <div style="display:flex;align-items:center;gap:12;margin-bottom:8px;">
-          <div style="width:36px;height:36px;background:rgba(255,255,255,0.2);border-radius:8px;display:inline-flex;align-items:center;justify-content:center;margin-right:12px;">
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 2L10 18M2 10L18 10" stroke="white" stroke-width="2.5" stroke-linecap="round"/><circle cx="10" cy="10" r="3" fill="white"/></svg>
+        <div style="display:flex;align-items:center;margin-bottom:10px;">
+          <div style="width:32px;height:32px;background:rgba(255,255,255,0.2);border-radius:7px;display:inline-flex;align-items:center;justify-content:center;margin-right:10px;">
+            <svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M10 2L10 18M2 10L18 10" stroke="white" stroke-width="2.5" stroke-linecap="round"/><circle cx="10" cy="10" r="3" fill="white"/></svg>
           </div>
-          <span style="font-size:22px;font-weight:700;color:white;letter-spacing:0.5px;">INVTRACK</span>
-          <span style="font-size:11px;color:rgba(255,255,255,0.6);margin-left:8px;letter-spacing:2px;font-weight:500;">MEDICAL PRO</span>
+          <span style="font-size:18px;font-weight:700;color:white;letter-spacing:0.5px;">INVTRACK</span>
+          <span style="font-size:10px;color:rgba(255,255,255,0.55);margin-left:8px;letter-spacing:2px;">MEDICAL PRO</span>
         </div>
-        <div style="font-size:28px;font-weight:700;color:white;letter-spacing:-0.5px;">Quote Request Form</div>
-        <div style="font-size:13px;color:rgba(255,255,255,0.75);margin-top:4px;">Official Procurement Document</div>
+        <div style="font-size:26px;font-weight:700;color:white;">Quote Request Form</div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.7);margin-top:3px;">Official Procurement Document — Confidential</div>
       </div>
-      <div style="text-align:right;">
-        <div style="background:rgba(255,255,255,0.15);border-radius:8px;padding:16px 20px;">
-          <div style="font-size:10px;color:rgba(255,255,255,0.6);letter-spacing:2px;margin-bottom:4px;">REFERENCE NO.</div>
-          <div style="font-size:20px;font-weight:700;color:white;font-family:monospace;">#${refNum}</div>
-          <div style="font-size:11px;color:rgba(255,255,255,0.7);margin-top:6px;">${date}</div>
-        </div>
+      <div style="text-align:right;background:rgba(255,255,255,0.15);border-radius:8px;padding:14px 18px;">
+        <div style="font-size:9px;color:rgba(255,255,255,0.55);letter-spacing:2px;margin-bottom:3px;">REFERENCE NO.</div>
+        <div style="font-size:18px;font-weight:700;color:white;font-family:monospace;">#${refNum}</div>
+        <div style="font-size:11px;color:rgba(255,255,255,0.65);margin-top:4px;">${date}</div>
       </div>
     </div>
   </div>
+
   <!-- Status Bar -->
-  <div style="background:#ebf4ff;border-bottom:2px solid #bee3f8;padding:10px 36px;display:flex;gap:32px;">
-    <div><span style="font-size:10px;color:#2c5282;letter-spacing:1px;font-weight:700;">STATUS</span><span style="margin-left:8px;background:#2b6cb0;color:white;border-radius:12px;padding:2px 10px;font-size:11px;font-weight:600;">${rfp.status}</span></div>
-    <div><span style="font-size:10px;color:#2c5282;letter-spacing:1px;font-weight:700;">ITEMS</span><span style="margin-left:8px;font-size:12px;color:#2d3748;font-weight:600;">${rfp.lines.length} line items</span></div>
-    <div><span style="font-size:10px;color:#2c5282;letter-spacing:1px;font-weight:700;">ITEMS</span><span style="margin-left:8px;font-size:12px;color:#2d3748;font-weight:600;">${rfp.lines.length} line items</span></div>
+  <div style="background:#ebf4ff;border-bottom:2px solid #bee3f8;padding:9px 32px;display:flex;gap:28px;align-items:center;">
+    <div><span style="font-size:9px;color:#2c5282;letter-spacing:1px;font-weight:700;">STATUS</span>
+      <span style="margin-left:8px;background:#2b6cb0;color:white;border-radius:10px;padding:2px 9px;font-size:10px;font-weight:600;">${rfp.status}</span></div>
+    <div><span style="font-size:9px;color:#2c5282;letter-spacing:1px;font-weight:700;">ITEMS</span>
+      <span style="margin-left:6px;font-size:12px;color:#2d3748;font-weight:600;">${rfp.lines.length}</span></div>
+    <div><span style="font-size:9px;color:#2c5282;letter-spacing:1px;font-weight:700;">DATE</span>
+      <span style="margin-left:6px;font-size:12px;color:#2d3748;font-weight:600;">${date}</span></div>
   </div>
-  <!-- Vendor & Billing Info -->
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:0;border-bottom:1px solid #e2e8f0;">
-    <div style="padding:20px 36px;border-right:1px solid #e2e8f0;">
-      <div style="font-size:10px;color:#718096;letter-spacing:2px;font-weight:700;margin-bottom:10px;">QUOTE REQUESTED FROM</div>
-      <div style="font-size:16px;font-weight:700;color:#1a202c;margin-bottom:4px;">${vendor?.name||"Vendor"}</div>
-      ${vendor?.contactName?`<div style="font-size:13px;color:#4a5568;margin-bottom:2px;">Attn: ${vendor.contactName}${vendor.contactTitle?" · "+vendor.contactTitle:""}</div>`:""}
-      ${vendor?.email?`<div style="font-size:13px;color:#2b6cb0;">${vendor.email}</div>`:""}
-      ${vendor?.contactPhone?`<div style="font-size:13px;color:#4a5568;">${vendor.contactPhone}</div>`:""}
+
+  <!-- Vendor & From Info -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid #e2e8f0;">
+    <div style="padding:18px 32px;border-right:1px solid #e2e8f0;">
+      <div style="font-size:9px;color:#718096;letter-spacing:2px;font-weight:700;margin-bottom:8px;">QUOTE REQUESTED FROM</div>
+      <div style="font-size:16px;font-weight:700;color:#1a202c;margin-bottom:3px;">${vendor?.name||"Vendor"}</div>
+      ${vendor?.contactName?`<div style="font-size:12px;color:#4a5568;margin-bottom:1px;">Attn: ${vendor.contactName}${vendor.contactTitle?" · "+vendor.contactTitle:""}</div>`:""}
+      ${vendor?.email?`<div style="font-size:12px;color:#2b6cb0;">${vendor.email}</div>`:""}
+      ${vendor?.contactPhone?`<div style="font-size:12px;color:#4a5568;">${vendor.contactPhone}</div>`:""}
     </div>
-    <div style="padding:20px 36px;">
-      <div style="font-size:10px;color:#718096;letter-spacing:2px;font-weight:700;margin-bottom:10px;">REQUESTED BY</div>
-      <div style="font-size:14px;font-weight:600;color:#1a202c;margin-bottom:4px;">InvTrack Pro User</div>
-      <div style="font-size:13px;color:#4a5568;">Date Issued: ${date}</div>
-      <div style="font-size:13px;color:#4a5568;margin-top:2px;">Valid for: 30 days</div>
-      ${rfp.dueDate?`<div style="font-size:13px;color:#c53030;font-weight:600;margin-top:4px;">Response by: ${rfp.dueDate}</div>`:""}
+    <div style="padding:18px 32px;">
+      <div style="font-size:9px;color:#718096;letter-spacing:2px;font-weight:700;margin-bottom:8px;">REQUESTED BY</div>
+      <div style="font-size:14px;font-weight:600;color:#1a202c;margin-bottom:3px;">InvTrack Pro</div>
+      <div style="font-size:12px;color:#4a5568;">Date Issued: ${date}</div>
+      <div style="font-size:12px;color:#4a5568;margin-top:2px;">Quote valid for: 30 days</div>
+      ${rfp.dueDate?`<div style="font-size:12px;color:#c53030;font-weight:600;margin-top:3px;">Please respond by: ${rfp.dueDate}</div>`:""}
     </div>
   </div>
-  <!-- Line Items Table -->
-  <div style="padding:24px 36px 0;">
-    <div style="font-size:11px;color:#718096;letter-spacing:2px;font-weight:700;margin-bottom:12px;">REQUESTED ITEMS</div>
-    <table style="width:100%;border-collapse:collapse;border:1px solid #e2e8f0;border-radius:8px;overflow:hidden;">
+
+  <!-- Line Items Table — NO PRICES -->
+  <div style="padding:20px 32px 0;">
+    <div style="font-size:10px;color:#718096;letter-spacing:2px;font-weight:700;margin-bottom:10px;">REQUESTED ITEMS</div>
+    <table style="width:100%;border-collapse:collapse;border:1px solid #e2e8f0;overflow:hidden;">
       <thead>
         <tr style="background:#2b6cb0;">
-          <th style="padding:11px 14px;text-align:left;font-size:11px;color:white;letter-spacing:0.5px;font-weight:600;">PRODUCT NAME</th>
-          <th style="padding:11px 14px;text-align:left;font-size:11px;color:white;letter-spacing:0.5px;font-weight:600;">SKU / CODE</th>
-          <th style="padding:11px 14px;text-align:left;font-size:11px;color:white;letter-spacing:0.5px;font-weight:600;">STRENGTH</th>
-          <th style="padding:11px 14px;text-align:center;font-size:11px;color:white;letter-spacing:0.5px;font-weight:600;">QTY</th>
-          <th style="padding:11px 14px;text-align:right;font-size:11px;color:white;letter-spacing:0.5px;font-weight:600;">OUR PRICE</th>
-          <th style="padding:11px 14px;text-align:right;font-size:11px;color:white;letter-spacing:0.5px;font-weight:600;">LINE TOTAL</th>
-          <th style="padding:11px 14px;text-align:right;font-size:11px;color:rgba(255,255,255,0.85);letter-spacing:0.5px;font-weight:600;">YOUR QUOTE</th>
+          <th style="padding:10px 14px;text-align:left;font-size:11px;color:white;font-weight:600;letter-spacing:0.3px;">PRODUCT NAME</th>
+          <th style="padding:10px 14px;text-align:left;font-size:11px;color:white;font-weight:600;">STRENGTH</th>
+          <th style="padding:10px 14px;text-align:center;font-size:11px;color:white;font-weight:600;">QTY</th>
+          <th style="padding:10px 14px;text-align:center;font-size:11px;color:white;font-weight:600;">PACK SIZE</th>
+          <th style="padding:10px 14px;text-align:right;font-size:11px;color:rgba(255,255,255,0.9);font-weight:600;">UNIT PRICE</th>
+          <th style="padding:10px 14px;text-align:right;font-size:11px;color:rgba(255,255,255,0.9);font-weight:600;">LINE TOTAL</th>
         </tr>
       </thead>
       <tbody>${rows}</tbody>
     </table>
   </div>
-  <!-- Totals + Reply Section -->
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;padding:24px 36px;">
-    <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:20px;">
-      <div style="font-size:11px;color:#718096;letter-spacing:2px;font-weight:700;margin-bottom:14px;">VENDOR REPLY — PLEASE COMPLETE</div>
+
+  <!-- Reply + Instructions -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;padding:20px 32px;">
+    <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:18px;">
+      <div style="font-size:10px;color:#718096;letter-spacing:2px;font-weight:700;margin-bottom:12px;">VENDOR REPLY — PLEASE COMPLETE</div>
       <table style="width:100%;">
-        <tr><td style="padding:8px 0;font-size:13px;color:#4a5568;border-bottom:1px solid #e2e8f0;">Quote Total (USD)</td><td style="padding:8px 0;text-align:right;border-bottom:1px solid #e2e8f0;">$______________</td></tr>
-        <tr><td style="padding:8px 0;font-size:13px;color:#4a5568;border-bottom:1px solid #e2e8f0;">Shipping & Handling</td><td style="padding:8px 0;text-align:right;border-bottom:1px solid #e2e8f0;">$______________</td></tr>
-        <tr><td style="padding:8px 0;font-size:13px;color:#4a5568;border-bottom:2px solid #2b6cb0;">Taxes / Other Fees</td><td style="padding:8px 0;text-align:right;border-bottom:2px solid #2b6cb0;">$______________</td></tr>
-        <tr><td style="padding:10px 0;font-size:14px;font-weight:700;color:#1a202c;">GRAND TOTAL</td><td style="padding:10px 0;text-align:right;font-size:14px;font-weight:700;color:#2b6cb0;">$______________</td></tr>
+        <tr><td style="padding:7px 0;font-size:12px;color:#4a5568;border-bottom:1px solid #e2e8f0;">Quote Total (USD)</td>
+            <td style="padding:7px 0;text-align:right;border-bottom:1px solid #e2e8f0;">$______________</td></tr>
+        <tr><td style="padding:7px 0;font-size:12px;color:#4a5568;border-bottom:1px solid #e2e8f0;">Shipping &amp; Handling</td>
+            <td style="padding:7px 0;text-align:right;border-bottom:1px solid #e2e8f0;">$______________</td></tr>
+        <tr><td style="padding:7px 0;font-size:12px;color:#4a5568;border-bottom:2px solid #2b6cb0;">Other Fees / Taxes</td>
+            <td style="padding:7px 0;text-align:right;border-bottom:2px solid #2b6cb0;">$______________</td></tr>
+        <tr><td style="padding:9px 0;font-size:14px;font-weight:700;color:#1a202c;">GRAND TOTAL</td>
+            <td style="padding:9px 0;text-align:right;font-size:14px;font-weight:700;color:#2b6cb0;">$______________</td></tr>
       </table>
-      <div style="margin-top:12px;"><div style="font-size:11px;color:#718096;margin-bottom:4px;">Estimated Lead Time:</div><div style="border-bottom:1px solid #cbd5e0;height:24px;"></div></div>
-      <div style="margin-top:10px;"><div style="font-size:11px;color:#718096;margin-bottom:4px;">Notes / Conditions:</div><div style="border-bottom:1px solid #cbd5e0;height:24px;margin-bottom:6px;"></div><div style="border-bottom:1px solid #cbd5e0;height:24px;"></div></div>
+      <div style="margin-top:10px;">
+        <div style="font-size:10px;color:#718096;margin-bottom:3px;">Lead Time / ETA:</div>
+        <div style="border-bottom:1px solid #cbd5e0;height:22px;"></div>
+      </div>
+      <div style="margin-top:8px;">
+        <div style="font-size:10px;color:#718096;margin-bottom:3px;">Notes / Conditions:</div>
+        <div style="border-bottom:1px solid #cbd5e0;height:22px;margin-bottom:5px;"></div>
+        <div style="border-bottom:1px solid #cbd5e0;height:22px;"></div>
+      </div>
     </div>
     <div>
-      <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:20px;margin-bottom:16px;">
-        <div style="font-size:11px;color:#718096;letter-spacing:2px;font-weight:700;margin-bottom:12px;">QUOTING INSTRUCTIONS</div>
-        <div style="font-size:13px;color:#4a5568;line-height:2;">
-          <div>✓ Provide unit pricing for all items</div>
-          <div>✓ List any volume discounts available</div>
-          <div>✓ Include shipping &amp; handling separately</div>
+      <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:18px;margin-bottom:14px;">
+        <div style="font-size:10px;color:#718096;letter-spacing:2px;font-weight:700;margin-bottom:10px;">QUOTING INSTRUCTIONS</div>
+        <div style="font-size:12px;color:#4a5568;line-height:2.1;">
+          <div>✓ Provide unit pricing for each item listed</div>
+          <div>✓ Note any volume discounts available</div>
+          <div>✓ List shipping &amp; handling separately</div>
           <div>✓ Quote valid for 30 days from issue date</div>
           <div>✓ Sign and return by email or post</div>
         </div>
       </div>
-      ${companyNotes?`<div style="background:#fffbeb;border:1px solid #f6e05e;border-radius:8px;padding:16px;"><div style="font-size:11px;color:#744210;letter-spacing:2px;font-weight:700;margin-bottom:8px;">NOTES</div><div style="font-size:13px;color:#744210;line-height:1.6;">${companyNotes}</div></div>`:""}
+      ${companyNotes?`<div style="background:#fffbeb;border:1px solid #f6e05e;border-radius:8px;padding:14px;"><div style="font-size:10px;color:#744210;letter-spacing:2px;font-weight:700;margin-bottom:6px;">SPECIAL NOTES</div><div style="font-size:12px;color:#744210;line-height:1.6;">${companyNotes}</div></div>`:""}
     </div>
   </div>
-  <!-- Signature Block -->
-  <div style="margin:0 36px 24px;border:1px solid #e2e8f0;border-radius:8px;padding:20px;background:#f8fafc;">
-    <div style="font-size:11px;color:#718096;letter-spacing:2px;font-weight:700;margin-bottom:14px;">VENDOR AUTHORIZATION</div>
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:24px;">
-      <div><div style="font-size:11px;color:#718096;margin-bottom:4px;">Authorized Signature</div><div style="border-bottom:1px solid #cbd5e0;height:36px;"></div></div>
-      <div><div style="font-size:11px;color:#718096;margin-bottom:4px;">Printed Name & Title</div><div style="border-bottom:1px solid #cbd5e0;height:36px;"></div></div>
-      <div><div style="font-size:11px;color:#718096;margin-bottom:4px;">Date</div><div style="border-bottom:1px solid #cbd5e0;height:36px;"></div></div>
+
+  <!-- Signature -->
+  <div style="margin:0 32px 20px;border:1px solid #e2e8f0;border-radius:8px;padding:16px;background:#f8fafc;">
+    <div style="font-size:10px;color:#718096;letter-spacing:2px;font-weight:700;margin-bottom:12px;">VENDOR AUTHORIZATION</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;">
+      <div><div style="font-size:10px;color:#718096;margin-bottom:3px;">Authorized Signature</div><div style="border-bottom:1px solid #cbd5e0;height:32px;"></div></div>
+      <div><div style="font-size:10px;color:#718096;margin-bottom:3px;">Printed Name &amp; Title</div><div style="border-bottom:1px solid #cbd5e0;height:32px;"></div></div>
+      <div><div style="font-size:10px;color:#718096;margin-bottom:3px;">Date</div><div style="border-bottom:1px solid #cbd5e0;height:32px;"></div></div>
     </div>
   </div>
+
   <!-- Footer -->
-  <div style="background:#1a365d;padding:14px 36px;display:flex;justify-content:space-between;align-items:center;">
-    <div style="font-size:11px;color:rgba(255,255,255,0.6);">Generated by InvTrack Medical Pro · ${new Date().toLocaleDateString()}</div>
-    <div style="font-size:11px;color:rgba(255,255,255,0.6);">Ref: #${refNum} · Confidential</div>
+  <div style="background:#1a365d;padding:12px 32px;display:flex;justify-content:space-between;align-items:center;">
+    <div style="font-size:10px;color:rgba(255,255,255,0.55);">Generated by InvTrack Medical Pro · ${new Date().toLocaleDateString()}</div>
+    <div style="font-size:10px;color:rgba(255,255,255,0.55);">Ref: #${refNum} · Confidential</div>
   </div>
+
   <script>window.onload=()=>window.print();</script>
   </body></html>`;
   const w = window.open("","_blank","width=900,height=700");
@@ -920,7 +942,7 @@ function RFPs({store,update,log,showToast}){
       if(!vendor)return showToast("Select a vendor first",T.amber);
       if(!vp.length)return showToast("Add products to this vendor first",T.amber);
       const p=vp[0];
-      const fullName=p.name+(p.strength&&!p.name.includes(p.strength)?" "+p.strength:"");
+      const fullName=p.name+(p.strength&&!p.name.includes(p.strength)?" - "+p.strength:"");
       setDraft(d=>({...d,lines:[...d.lines,{id:uid(),productId:p.id,productName:fullName,sku:p.sku,strength:p.strength,unitPrice:parseFloat(p.price||0),qty:1}]}));
     }
     const th={textAlign:"left",padding:"7px 10px",fontSize:11,color:T.textMid,fontFamily:T.mono,borderBottom:`1px solid ${T.border}`,fontWeight:600,background:T.bgCard};
@@ -952,14 +974,14 @@ function RFPs({store,update,log,showToast}){
                       <select value={l.productId||""} onChange={e=>{
                           const p=vp.find(pp=>pp.id===e.target.value);
                           if(p){
-                            const fn=p.name+(p.strength&&!p.name.includes(p.strength)?" "+p.strength:"");
+                            const fn=p.name+(p.strength&&!p.name.includes(p.strength)?" - "+p.strength:"");
                             ul(l.id,{productId:p.id,productName:fn,sku:p.sku,strength:p.strength,unitPrice:parseFloat(p.price||0)});
                           }
                         }} style={{...IS,padding:"4px 8px",fontSize:12}}>
                         <option value="">— Select product —</option>
                         {vp.map(p=>{
-                          const displayName=p.name+(p.strength&&!p.name.includes(p.strength)?" "+p.strength:"");
-                          return <option key={p.id} value={p.id}>{displayName} — ${parseFloat(p.price||0).toFixed(2)}</option>;
+                          const displayName=p.name+(p.strength&&!p.name.includes(p.strength)?" - "+p.strength:"");
+                          return <option key={p.id} value={p.id}>{displayName}</option>;
                         })}
                       </select>
                     </td>
@@ -1031,23 +1053,30 @@ function RFPs({store,update,log,showToast}){
         {/* Line Items */}
         <div style={{border:`1px solid ${T.border}`,borderRadius:T.radius,overflow:"hidden",marginBottom:20}}>
           <table style={{width:"100%",borderCollapse:"collapse"}}>
-            <thead><tr>{["Product","SKU","Strength","Qty","Unit Price","Line Total"].map(h=><th key={h} style={th}>{h}</th>)}</tr></thead>
+            <thead>
+              <tr>{["Product","SKU","Strength","Qty","Vials/Kit"].map(h=><th key={h} style={th}>{h}</th>)}
+                <th style={{...th,color:T.amber}}>Est. Price ★</th>
+                <th style={{...th,color:T.amber}}>Est. Total ★</th>
+              </tr>
+              <tr><td colSpan={7} style={{padding:"4px 12px",fontSize:10,color:T.amber,fontStyle:"italic",background:T.amberDim}}>★ Internal estimates only — prices are NOT shown on the vendor PDF</td></tr>
+            </thead>
             <tbody>{rfp.lines.map((l,i)=>(
               <tr key={l.id} style={{borderBottom:`1px solid ${T.border}`,background:i%2===0?"transparent":T.bgCard+"80"}}>
                 <td style={{padding:"10px 12px",fontSize:13,color:T.text,fontWeight:500}}>{l.productName}</td>
                 <td style={{padding:"10px 12px",fontSize:12,color:T.textMid,fontFamily:T.mono}}>{l.sku||"—"}</td>
                 <td style={{padding:"10px 12px",fontSize:12,color:T.textMid}}>{l.strength||"—"}</td>
                 <td style={{padding:"10px 12px",fontSize:13,color:T.text,fontWeight:600}}>{l.qty}</td>
-                <td style={{padding:"10px 12px",fontSize:13,color:T.accent}}>${(parseFloat(l.unitPrice)||0).toFixed(2)}</td>
-                <td style={{padding:"10px 12px",fontSize:13,color:T.accent,fontWeight:700}}>${(l.qty*(parseFloat(l.unitPrice)||0)).toFixed(2)}</td>
+                <td style={{padding:"10px 12px",fontSize:12,color:T.textMid}}>{l.vials||10} vials</td>
+                <td style={{padding:"10px 12px",fontSize:13,color:T.amber}}>${(parseFloat(l.unitPrice)||0).toFixed(2)}</td>
+                <td style={{padding:"10px 12px",fontSize:13,color:T.amber,fontWeight:700}}>${(l.qty*(parseFloat(l.unitPrice)||0)).toFixed(2)}</td>
               </tr>
             ))}</tbody>
           </table>
         </div>
         <div style={{display:"flex",justifyContent:"flex-end",marginBottom:20}}>
-          <div style={{background:T.bgCard,border:`1px solid ${T.border}`,borderRadius:T.radius,padding:"10px 20px"}}>
-            <span style={{fontSize:13,color:T.textMid,marginRight:16}}>Our Estimate:</span>
-            <span style={{fontSize:20,fontWeight:700,color:T.accent}}>${rfp.subtotal?.toFixed(2)||"0.00"}</span>
+          <div style={{background:T.amberDim,border:`1px solid ${T.amber}44`,borderRadius:T.radius,padding:"10px 20px",display:"flex",alignItems:"center",gap:12}}>
+            <div style={{fontSize:10,color:T.amber,fontFamily:T.mono,fontWeight:700,letterSpacing:1}}>INTERNAL ESTIMATE</div>
+            <span style={{fontSize:20,fontWeight:700,color:T.amber}}>${rfp.subtotal?.toFixed(2)||"0.00"}</span>
           </div>
         </div>
         {/* Vendor Reply + Summary */}
@@ -1516,7 +1545,7 @@ function Invoices({store,update,log,showToast}){
                           <optgroup key={v.id} label={"📦 "+v.name}>
                             {(v.products||[]).map(p=>(
                               <option key={"v_"+v.id+"_"+p.id} value={"v_"+v.id+"_"+p.id}>
-                                {p.name}{p.strength?" · "+p.strength:""} — ${parseFloat(p.price||0).toFixed(2)}
+                                {p.name}{p.strength&&!(p.name||"").endsWith(p.strength)?" - "+p.strength:""}
                               </option>
                             ))}
                           </optgroup>
@@ -1525,7 +1554,7 @@ function Invoices({store,update,log,showToast}){
                           <optgroup label="🏥 Inventory">
                             {store.inventory.map(i=>(
                               <option key={"i_"+i.id} value={"i_"+i.id}>
-                                {i.name}{i.strength?" · "+i.strength:""} — ${parseFloat(i.salePrice||0).toFixed(2)} (Stock: {i.qty})
+                                {i.name}{i.strength&&!(i.name||"").endsWith(i.strength)?" - "+i.strength:""} (Stock: {i.qty})
                               </option>
                             ))}
                           </optgroup>
