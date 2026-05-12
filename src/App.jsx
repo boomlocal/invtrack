@@ -76,15 +76,75 @@ async function parseFileWithClaude(fileData, fileType) {
   }
 }
 
-const DARK = { bg:"#060c18",bgPanel:"#0b1525",bgCard:"#0f1e34",border:"rgba(0,200,255,0.13)",borderHi:"rgba(0,200,255,0.38)",accent:"#00c8ff",accentDim:"rgba(0,200,255,0.14)",accentGlow:"rgba(0,200,255,0.35)",green:"#00e5a0",greenDim:"rgba(0,229,160,0.14)",amber:"#ffb547",amberDim:"rgba(255,181,71,0.14)",red:"#ff4d6a",redDim:"rgba(255,77,106,0.14)",purple:"#c4b5fd",purpleDim:"rgba(196,181,253,0.14)",text:"#eef5ff",textMid:"#9dbcd8",textDim:"#4a7090",inputBg:"#0b1525",scrollThumb:"rgba(0,200,255,0.3)" };
-const LIGHT = { bg:"#f3f6fb",bgPanel:"#ffffff",bgCard:"#eaeff8",border:"rgba(0,100,180,0.14)",borderHi:"rgba(0,100,180,0.42)",accent:"#0068c0",accentDim:"rgba(0,104,192,0.11)",accentGlow:"rgba(0,104,192,0.28)",green:"#046c4a",greenDim:"rgba(4,108,74,0.1)",amber:"#9a5000",amberDim:"rgba(154,80,0,0.1)",red:"#b81c38",redDim:"rgba(184,28,56,0.1)",purple:"#5b21b6",purpleDim:"rgba(91,33,182,0.1)",text:"#0c1a2e",textMid:"#2a4a6a",textDim:"#507090",inputBg:"#ffffff",scrollThumb:"rgba(0,104,192,0.28)" };
+// ── Medical/Clinical Theme ────────────────────────────────────────────────────
+// Dark: deep clinical navy — like a high-end medical software suite
+const DARK = {
+  bg:"#0a0f1a",           // Deep midnight navy
+  bgPanel:"#0e1628",      // Slightly lighter panel
+  bgCard:"#121d35",       // Card surfaces
+  bgCardHover:"#162340",
+  border:"rgba(99,179,237,0.12)",
+  borderHi:"rgba(99,179,237,0.35)",
+  accent:"#63b3ed",       // Clinical blue — calm, precise
+  accentDark:"#2b6cb0",
+  accentDim:"rgba(99,179,237,0.1)",
+  accentGlow:"rgba(99,179,237,0.25)",
+  green:"#68d391",        // Vital green — health indicator
+  greenDark:"#276749",
+  greenDim:"rgba(104,211,145,0.12)",
+  amber:"#f6ad55",        // Alert amber
+  amberDim:"rgba(246,173,85,0.12)",
+  red:"#fc8181",          // Critical red
+  redDim:"rgba(252,129,129,0.12)",
+  purple:"#b794f4",       // Lab purple
+  purpleDim:"rgba(183,148,244,0.12)",
+  teal:"#4fd1c7",         // Medical teal accent
+  tealDim:"rgba(79,209,199,0.12)",
+  text:"#e8f0fe",         // Crisp near-white
+  textMid:"#90afd4",      // Mid blue-grey — readable
+  textDim:"#4a6a8a",      // Dimmed
+  inputBg:"#0e1628",
+  scrollThumb:"rgba(99,179,237,0.25)",
+  shadow:"rgba(0,0,0,0.4)",
+};
 
-let T = {...DARK, font:"'Poppins',system-ui,sans-serif", mono:"'Roboto Mono','Courier New',monospace", radius:"10px", radiusLg:"14px" };
+// Light: clean clinical white — hospital/lab precision
+const LIGHT = {
+  bg:"#f0f4f8",           // Cool clinical grey-white
+  bgPanel:"#ffffff",      // Pure white panels
+  bgCard:"#f7fafc",       // Very light card
+  bgCardHover:"#edf2f7",
+  border:"rgba(74,130,180,0.15)",
+  borderHi:"rgba(44,130,201,0.4)",
+  accent:"#2b6cb0",       // Deep clinical blue
+  accentDark:"#1a4a82",
+  accentDim:"rgba(43,108,176,0.08)",
+  accentGlow:"rgba(43,108,176,0.2)",
+  green:"#276749",        // Clinical green
+  greenDark:"#1a4a33",
+  greenDim:"rgba(39,103,73,0.08)",
+  amber:"#744210",        // Warning amber
+  amberDim:"rgba(116,66,16,0.08)",
+  red:"#9b2335",          // Alert red
+  redDim:"rgba(155,35,53,0.08)",
+  purple:"#553c9a",       // Lab purple
+  purpleDim:"rgba(85,60,154,0.08)",
+  teal:"#285e61",         // Medical teal
+  tealDim:"rgba(40,94,97,0.08)",
+  text:"#1a202c",         // Near black — maximum readability
+  textMid:"#2d4a6a",      // Dark blue-grey
+  textDim:"#607d9a",      // Muted
+  inputBg:"#ffffff",
+  scrollThumb:"rgba(43,108,176,0.25)",
+  shadow:"rgba(0,0,0,0.08)",
+};
+
+let T = {...DARK, font:"'Inter','Poppins',system-ui,sans-serif", mono:"'Roboto Mono','Courier New',monospace", radius:"8px", radiusLg:"12px", radiusFull:"100px" };
 
 function buildT(mode, fontId) {
   const base = mode === "dark" ? DARK : LIGHT;
-  const font = fontId === "roboto" ? "'Roboto',system-ui,sans-serif" : "'Poppins',system-ui,sans-serif";
-  return {...base, font, mono:"'Roboto Mono','Courier New',monospace", radius:"10px", radiusLg:"14px"};
+  const font = fontId === "roboto" ? "'Roboto',system-ui,sans-serif" : fontId === "poppins" ? "'Poppins',system-ui,sans-serif" : "'Inter','Poppins',system-ui,sans-serif";
+  return {...base, font, mono:"'Roboto Mono','Courier New',monospace", radius:"8px", radiusLg:"12px", radiusFull:"100px"};
 }
 
 function getSC(t) {
@@ -103,22 +163,23 @@ const INDUSTRIES = ["Medical Supplies","Pharmaceuticals","Peptide Manufacturer",
 const PAYMENT_TERMS = ["Net 15","Net 30","Net 60","Due on Receipt","COD","Prepaid"];
 const US_STATES = ["Alabama","Alaska","Arizona","Arkansas","California","Colorado","Connecticut","Delaware","Florida","Georgia","Hawaii","Idaho","Illinois","Indiana","Iowa","Kansas","Kentucky","Louisiana","Maine","Maryland","Massachusetts","Michigan","Minnesota","Mississippi","Missouri","Montana","Nebraska","Nevada","New Hampshire","New Jersey","New Mexico","New York","North Carolina","North Dakota","Ohio","Oklahoma","Oregon","Pennsylvania","Rhode Island","South Carolina","South Dakota","Tennessee","Texas","Utah","Vermont","Virginia","Washington","West Virginia","Wisconsin","Wyoming"];
 const COUNTRIES = [{code:"US",label:"🇺🇸 United States"},{code:"CA",label:"🇨🇦 Canada"},{code:"GB",label:"🇬🇧 United Kingdom"},{code:"AU",label:"🇦🇺 Australia"},{code:"DE",label:"🇩🇪 Germany"},{code:"OTHER",label:"🌐 Other"}];
-const NAV = [{id:"dashboard",label:"Dashboard",icon:"⬡"},{id:"vendors",label:"Vendors",icon:"◈"},{id:"rfp",label:"RFPs",icon:"◎"},{id:"inventory",label:"Inventory",icon:"▦"},{id:"clients",label:"Clients",icon:"◉"},{id:"invoices",label:"Invoices",icon:"◫"},{id:"log",label:"Activity",icon:"≡"},{id:"admin",label:"Admin",icon:"⚙"}];
+const NAV = [{id:"dashboard",label:"Dashboard",icon:"◫"},{id:"vendors",label:"Vendors",icon:"◈"},{id:"rfp",label:"RFPs",icon:"◎"},{id:"inventory",label:"Inventory",icon:"▦"},{id:"clients",label:"Clients",icon:"◉"},{id:"invoices",label:"Invoices",icon:"◻"},{id:"log",label:"Activity",icon:"≡"},{id:"admin",label:"Settings",icon:"⚙"}];
 const RFP_STATUSES = ["Draft","Sent","Quote Received","Accepted","Pending","Declined"];
 const INV_STATUSES = ["Draft","Sent","Paid","Overdue","Cancelled"];
 
 function vendorInitials(n){return n.split(" ").slice(0,2).map(w=>w[0]).join("").toUpperCase();}
 function vendorCompleteness(v){const c=[!!v.name,!!v.contactName,!!v.contactPhone,!!v.email,!!v.businessNumber,!!v.industry,!!v.address,!!v.city,!!(v.state||v.country!=="US"),!!v.zip,!!v.country,!!v.paymentTerms,!!v.notes];const s=c.filter(Boolean).length;const p=Math.round((s/c.length)*100);return{pct:p,tier:p>=75?"Complete":p>=35?"Partial":"Minimal"};}
 
-function Btn({children,onClick,small,ghost,danger,disabled,style={}}){
-  const bg=danger?T.redDim:ghost?"transparent":T.accentDim;
-  const border=danger?`1px solid ${T.red}55`:ghost?`1px solid ${T.border}`:`1px solid ${T.borderHi}`;
-  const color=danger?T.red:ghost?T.textMid:T.accent;
-  return <button onClick={onClick} disabled={disabled} style={{background:bg,border,color,borderRadius:8,padding:small?"5px 13px":"8px 20px",cursor:disabled?"not-allowed":"pointer",fontSize:small?12:13,fontWeight:600,fontFamily:T.font,opacity:disabled?0.4:1,whiteSpace:"nowrap",...style}}>{children}</button>;
+function Btn({children,onClick,small,ghost,danger,primary,disabled,style={}}){
+  const bg=danger?T.redDim:primary?T.accent:ghost?"transparent":T.accentDim;
+  const border=danger?`1px solid ${T.red}55`:primary?"none":ghost?`1px solid ${T.border}`:`1px solid ${T.borderHi}`;
+  const color=danger?T.red:primary?"#fff":ghost?T.textMid:T.accent;
+  const shadow=primary?`0 2px 8px ${T.accentGlow}`:"none";
+  return <button onClick={onClick} disabled={disabled} style={{background:bg,border,color,borderRadius:T.radius,padding:small?"5px 14px":"9px 22px",cursor:disabled?"not-allowed":"pointer",fontSize:small?11:13,fontWeight:600,fontFamily:T.font,opacity:disabled?0.4:1,whiteSpace:"nowrap",boxShadow:shadow,letterSpacing:0.3,...style}}>{children}</button>;
 }
-function Lbl({children}){return <div style={{fontSize:11,color:T.textMid,fontFamily:T.font,fontWeight:700,letterSpacing:0.5,marginBottom:6,textTransform:"uppercase"}}>{children}</div>;}
+function Lbl({children}){return <div style={{fontSize:10,color:T.textDim,fontFamily:T.mono,fontWeight:600,letterSpacing:1.5,marginBottom:6,textTransform:"uppercase"}}>{children}</div>;}
 function Chip({children,color}){return <span style={{background:color+"22",border:`1px solid ${color}44`,color,borderRadius:20,padding:"3px 10px",fontSize:11,fontWeight:600}}>{children}</span>;}
-function SBadge({status}){const s=getSC(T)[status]||{color:T.textMid,bg:T.textMid+"28"};return <span style={{background:s.bg,color:s.color,borderRadius:20,padding:"3px 10px",fontSize:10,fontWeight:700,fontFamily:T.mono,border:`1px solid ${s.color}44`}}>{status}</span>;}
+function SBadge({status}){const s=getSC(T)[status]||{color:T.textMid,bg:T.textMid+"28"};return <span style={{background:s.bg,color:s.color,borderRadius:T.radiusFull||100,padding:"3px 10px",fontSize:10,fontWeight:600,fontFamily:T.mono,border:`1px solid ${s.color}33`,letterSpacing:0.3}}>{status}</span>;}
 
 function AdminPanel({themeMode,setThemeMode,fontChoice,setFontChoice}){
   return(
@@ -166,8 +227,9 @@ function AdminPanel({themeMode,setThemeMode,fontChoice,setFontChoice}){
             const ff=f.id==="roboto"?"'Roboto',system-ui,sans-serif":"'Poppins',system-ui,sans-serif";
             return(
               <div key={f.id} onClick={()=>setFontChoice(f.id)} style={{flex:1,border:`2px solid ${active?T.accent:T.border}`,borderRadius:T.radius,padding:"18px 20px",cursor:"pointer",background:active?T.accentDim:T.bgPanel}}>
-                <div style={{fontFamily:ff,fontSize:22,fontWeight:700,color:T.text,marginBottom:6}}>{f.label}</div>
-                <div style={{fontFamily:ff,fontSize:13,color:T.textMid,marginBottom:8}}>The quick brown fox jumps over the lazy dog</div>
+                <div style={{fontFamily:ff,fontSize:20,fontWeight:700,color:T.text,marginBottom:4}}>{f.label}</div>
+                <div style={{fontSize:11,color:T.accent,marginBottom:8,fontWeight:500}}>{f.desc}</div>
+                <div style={{fontFamily:ff,fontSize:13,color:T.textMid,marginBottom:6}}>The quick brown fox jumps over the lazy dog</div>
                 <div style={{fontFamily:ff,fontSize:11,color:T.textDim}}>ABCDEFGHIJKLMNOPQRSTUVWXYZ · 0123456789</div>
                 <div style={{marginTop:12,display:"flex",justifyContent:"flex-end"}}>
                   <div style={{width:18,height:18,borderRadius:"50%",border:`2px solid ${active?T.accent:T.border}`,background:active?T.accent:"transparent",display:"flex",alignItems:"center",justifyContent:"center"}}>
@@ -192,21 +254,28 @@ function Dashboard({store,setTab,lowStock,outOfStock}){
   const kpis=[{label:"Inventory Value",value:`$${totalVal.toFixed(2)}`,sub:`${store.inventory.length} products`,color:T.accent,icon:"▦"},{label:"Open RFPs",value:openRFPs,sub:`${store.rfps.length} total`,color:T.purple,icon:"◎"},{label:"Total Savings",value:`$${savings.toFixed(2)}`,sub:"from accepted RFPs",color:T.green,icon:"↓"},{label:"Outstanding",value:`$${unpaidTotal.toFixed(2)}`,sub:`${unpaid.length} invoices`,color:T.amber,icon:"◫"}];
   return(
     <div style={{padding:"32px 36px"}}>
-      <div style={{marginBottom:32,display:"flex",justifyContent:"space-between",alignItems:"flex-end"}}>
+      <div style={{marginBottom:28,display:"flex",justifyContent:"space-between",alignItems:"flex-end",paddingBottom:20,borderBottom:`1px solid ${T.border}`}}>
         <div>
-          <div style={{fontSize:11,color:T.accent,fontFamily:T.mono,letterSpacing:3,textTransform:"uppercase",marginBottom:6}}>System Overview</div>
-          <h1 style={{fontSize:28,fontWeight:700,color:T.text}}>Dashboard</h1>
+          <div style={{fontSize:10,color:T.accent,fontFamily:T.mono,letterSpacing:2,textTransform:"uppercase",marginBottom:8,fontWeight:600}}>● LIVE · SYSTEM OVERVIEW</div>
+          <h1 style={{fontSize:26,fontWeight:700,color:T.text,letterSpacing:-0.5}}>Dashboard</h1>
         </div>
-        <div style={{fontSize:12,color:T.textMid,fontFamily:T.mono,fontWeight:500}}>{new Date().toLocaleDateString("en-US",{weekday:"long",year:"numeric",month:"long",day:"numeric"})}</div>
+        <div style={{textAlign:"right"}}>
+          <div style={{fontSize:13,color:T.text,fontWeight:500}}>{new Date().toLocaleDateString("en-US",{weekday:"long",month:"long",day:"numeric",year:"numeric"})}</div>
+          <div style={{fontSize:11,color:T.textDim,marginTop:2,fontFamily:T.mono}}>{new Date().toLocaleTimeString("en-US",{hour:"2-digit",minute:"2-digit"})}</div>
+        </div>
       </div>
       <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:16,marginBottom:28}}>
         {kpis.map(k=>(
-          <div key={k.label} style={{background:T.bgCard,border:`1px solid ${k.color}30`,borderRadius:T.radiusLg,padding:"20px 22px",position:"relative",overflow:"hidden"}}>
-            <div style={{position:"absolute",top:0,left:0,right:0,height:2,background:`linear-gradient(90deg,${k.color},transparent)`}}/>
-            <div style={{position:"absolute",top:16,right:18,fontSize:22,opacity:0.1,color:k.color}}>{k.icon}</div>
-            <div style={{fontSize:10,color:T.textMid,fontFamily:T.mono,letterSpacing:2,textTransform:"uppercase",marginBottom:10,fontWeight:700}}>{k.label}</div>
-            <div style={{fontSize:26,fontWeight:700,color:k.color}}>{k.value}</div>
-            <div style={{fontSize:12,color:T.textMid,marginTop:5,fontWeight:500}}>{k.sub}</div>
+          <div key={k.label} style={{background:T.bgCard,border:`1px solid ${T.border}`,borderRadius:T.radiusLg,padding:"20px 22px",position:"relative",overflow:"hidden",boxShadow:`0 2px 8px ${T.shadow}`}}>
+            <div style={{position:"absolute",top:0,left:0,width:4,height:"100%",background:k.color,borderRadius:"8px 0 0 8px"}}/>
+            <div style={{paddingLeft:8}}>
+              <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:12}}>
+                <div style={{fontSize:10,color:T.textDim,fontFamily:T.mono,letterSpacing:1.5,textTransform:"uppercase",fontWeight:600}}>{k.label}</div>
+                <div style={{width:28,height:28,borderRadius:"50%",background:k.color+"18",display:"flex",alignItems:"center",justifyContent:"center",fontSize:13,color:k.color}}>{k.icon}</div>
+              </div>
+              <div style={{fontSize:28,fontWeight:700,color:T.text,letterSpacing:-0.5}}>{k.value}</div>
+              <div style={{fontSize:12,color:T.textMid,marginTop:4,fontWeight:400}}>{k.sub}</div>
+            </div>
           </div>
         ))}
       </div>
@@ -224,10 +293,12 @@ function Dashboard({store,setTab,lowStock,outOfStock}){
       )}
       <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:20}}>
         {[{title:"Recent RFPs",items:store.rfps.slice(0,6),render:r=>{const v=store.vendors.find(vv=>vv.id===r.vendorId);return(<div key={r.id} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"9px 0",borderBottom:`1px solid ${T.border}`}}><span style={{fontSize:13,color:T.text,fontWeight:500}}>{v?.name||"Unknown"}</span><SBadge status={r.status}/></div>);},empty:"No RFPs yet"},{title:"Recent Invoices",items:store.invoices.slice(0,6),render:inv=>{const c=store.clients.find(cc=>cc.id===inv.clientId);return(<div key={inv.id} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"9px 0",borderBottom:`1px solid ${T.border}`}}><span style={{fontSize:13,color:T.text,fontWeight:500}}>{c?.name||"Unknown"}</span><div style={{display:"flex",alignItems:"center",gap:10}}><span style={{fontSize:13,fontWeight:700,color:T.accent,fontFamily:T.mono}}>${inv.total.toFixed(2)}</span><SBadge status={inv.status}/></div></div>);},empty:"No invoices yet"}].map(panel=>(
-          <div key={panel.title} style={{background:T.bgCard,border:`1px solid ${T.border}`,borderRadius:T.radiusLg,padding:22,position:"relative",overflow:"hidden"}}>
-            <div style={{position:"absolute",top:0,left:0,right:0,height:1,background:`linear-gradient(90deg,${T.accent}55,transparent)`}}/>
-            <div style={{fontSize:11,color:T.accent,fontFamily:T.mono,letterSpacing:2,textTransform:"uppercase",marginBottom:14,fontWeight:600}}>{panel.title}</div>
-            {panel.items.length?panel.items.map(panel.render):<div style={{fontSize:13,color:T.textMid,padding:"12px 0"}}>{panel.empty}</div>}
+          <div key={panel.title} style={{background:T.bgCard,border:`1px solid ${T.border}`,borderRadius:T.radiusLg,padding:22,boxShadow:`0 2px 8px ${T.shadow}`}}>
+            <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:16}}>
+              <div style={{fontSize:12,color:T.text,fontWeight:600}}>{panel.title}</div>
+              <div style={{fontSize:10,color:T.textDim,fontFamily:T.mono}}>{panel.items.length} records</div>
+            </div>
+            {panel.items.length?panel.items.map(panel.render):<div style={{fontSize:13,color:T.textMid,padding:"20px 0",textAlign:"center"}}>{panel.empty}</div>}
           </div>
         ))}
       </div>
@@ -286,12 +357,17 @@ function PricingSection({vendor,update,showToast,log}){
             // Also strip trailing vial/pack info like "10vials", "5ml vials"
             return str.replace(/\s*\*?\s*\d+\s*vials?/i,"").replace(/\s*\*?\s*\d+\s*amps?/i,"").trim();
           };
-          const products=rows.map(r=>({
-            name:String(r[nameCol]||"").trim(),
-            sku:String(r[skuCol]||"").trim(),
-            price:parseFloat(String(r[priceCol]||"0").replace(/[^0-9.]/g,""))||0,
-            strength:cleanStrength(r[strengthCol])
-          })).filter(p=>p.name&&p.name!=="undefined");
+          const products=rows.map(r=>{
+            const pName=String(r[nameCol]||"").trim();
+            const pStrength=cleanStrength(r[strengthCol]);
+            const fullName=pName&&pStrength?pName+" "+pStrength:pName;
+            return{
+              name:fullName,
+              sku:String(r[skuCol]||"").trim(),
+              price:parseFloat(String(r[priceCol]||"0").replace(/[^0-9.]/g,""))||0,
+              strength:pStrength
+            };
+          }).filter(p=>p.name&&p.name!=="undefined");
           resolve(products);
         }catch(e){console.error("Excel parse error:",e);resolve([]);}
       };
@@ -318,8 +394,10 @@ function PricingSection({vendor,update,showToast,log}){
             const cols=line.split(",").map(c=>c.replace(/"/g,"").trim());
             const rawStr=strengthIdx>=0?cols[strengthIdx]||"":"";
             const cleanedStr=rawStr.split(/[*xX]/)[0].trim().replace(/\s*\d+\s*vials?/i,"").trim();
+            const csvName=nameIdx>=0?cols[nameIdx]||"":"";
+            const fullCsvName=csvName&&cleanedStr?csvName+" "+cleanedStr:csvName;
             return{
-              name:nameIdx>=0?cols[nameIdx]||"":"",
+              name:fullCsvName,
               sku:skuIdx>=0?cols[skuIdx]||"":"",
               price:priceIdx>=0?parseFloat(cols[priceIdx])||0:0,
               strength:cleanedStr
@@ -581,18 +659,24 @@ function Vendors({store,update,log,showToast}){
   return(
     <div style={{display:"flex",height:"100%",overflow:"hidden"}}>
       <div style={{width:260,borderRight:`1px solid ${T.border}`,overflow:"auto",padding:20,flexShrink:0}}>
-        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16}}><h3 style={{margin:0,fontSize:16,color:T.accent,fontWeight:700}}>Vendors</h3><Btn small onClick={()=>{setForm({});setSel(null);}}>+ New</Btn></div>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16}}><div><div style={{fontSize:10,color:T.textDim,fontFamily:T.mono,letterSpacing:1.5,textTransform:"uppercase",fontWeight:600,marginBottom:2}}>Directory</div><h3 style={{margin:0,fontSize:15,color:T.text,fontWeight:600}}>Vendors</h3></div><Btn small onClick={()=>{setForm({});setSel(null);}}>+ New Vendor</Btn></div>
         <input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Search vendors..." style={{...IS,marginBottom:8}}/>
         <div style={{fontSize:11,color:T.textMid,marginBottom:12,fontWeight:500}}>{filtered.length} vendor{filtered.length!==1?"s":""}</div>
         {filtered.map(v=>{const {tier}=vendorCompleteness(v);const tc=getTIER()[tier];return(
-          <div key={v.id} onClick={()=>{setSel(v.id);setForm(null);}} style={{padding:"10px 12px",borderRadius:6,cursor:"pointer",background:sel===v.id?T.bgPanel:"transparent",border:sel===v.id?`1px solid ${T.borderHi}`:"1px solid transparent",marginBottom:4}}>
-            <div style={{display:"flex",alignItems:"center",gap:8}}>
-              <div style={{width:30,height:30,borderRadius:"50%",background:T.bgCard,display:"flex",alignItems:"center",justifyContent:"center",fontSize:11,fontWeight:700,color:T.purple,flexShrink:0}}>{vendorInitials(v.name)}</div>
-              <div style={{flex:1,minWidth:0}}>
-                <div style={{fontSize:13,color:sel===v.id?T.accent:T.text,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap",fontWeight:600}}>{v.name}</div>
-                <div style={{fontSize:10,color:T.textMid,fontFamily:T.mono}}>{(v.products||[]).length} products</div>
+          <div key={v.id} style={{marginBottom:4}}>
+            <div onClick={()=>{setSel(v.id);setForm(null);}} style={{padding:"10px 12px",borderRadius:6,cursor:"pointer",background:sel===v.id?T.bgPanel:"transparent",border:sel===v.id?`1px solid ${T.borderHi}`:"1px solid transparent"}}>
+              <div style={{display:"flex",alignItems:"center",gap:8}}>
+                <div style={{width:30,height:30,borderRadius:"50%",background:T.bgCard,display:"flex",alignItems:"center",justifyContent:"center",fontSize:11,fontWeight:700,color:T.purple,flexShrink:0}}>{vendorInitials(v.name)}</div>
+                <div style={{flex:1,minWidth:0}}>
+                  <div style={{fontSize:13,color:sel===v.id?T.accent:T.text,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap",fontWeight:600}}>{v.name}</div>
+                  <div style={{fontSize:10,color:T.textMid,fontFamily:T.mono}}>{(v.products||[]).length} products</div>
+                </div>
+                <div style={{width:6,height:6,borderRadius:"50%",background:tc.text,flexShrink:0}}/>
               </div>
-              <div style={{width:6,height:6,borderRadius:"50%",background:tc.text,flexShrink:0}}/>
+              <div style={{display:"flex",gap:4,marginTop:6}}>
+                <button onClick={e=>{e.stopPropagation();setSel(v.id);setForm({...v});}} style={{fontSize:10,padding:"2px 8px",borderRadius:4,border:`1px solid ${T.border}`,background:"transparent",color:T.textMid,cursor:"pointer",fontFamily:T.font}}>Edit</button>
+                <button onClick={e=>{e.stopPropagation();if(!confirm("Delete "+v.name+" and all their products?"))return;update(s=>{s.vendors=s.vendors.filter(vv=>vv.id!==v.id);return s;});if(sel===v.id)setSel(null);}} style={{fontSize:10,padding:"2px 8px",borderRadius:4,border:`1px solid ${T.red}44`,background:"transparent",color:T.red,cursor:"pointer",fontFamily:T.font}}>Delete</button>
+              </div>
             </div>
           </div>
         );})}
@@ -651,103 +735,400 @@ function Vendors({store,update,log,showToast}){
   );
 }
 
+// ── PDF Export for Quote Request Form ────────────────────────────────────────
+function downloadRFPpdf(rfp, vendor, companyNotes) {
+  const date = new Date(rfp.createdAt).toLocaleDateString("en-US",{year:"numeric",month:"long",day:"numeric"});
+  const refNum = rfp.id.slice(0,8).toUpperCase();
+  const rows = rfp.lines.map((l,i) =>
+    `<tr style="background:${i%2===0?"#f8fafc":"#ffffff"}">
+      <td style="padding:10px 14px;border-bottom:1px solid #e2e8f0;font-size:13px;color:#1a202c">${l.productName}</td>
+      <td style="padding:10px 14px;border-bottom:1px solid #e2e8f0;font-size:12px;color:#4a5568;font-family:monospace">${l.sku||"—"}</td>
+      <td style="padding:10px 14px;border-bottom:1px solid #e2e8f0;font-size:12px;color:#4a5568">${l.strength||"—"}</td>
+      <td style="padding:10px 14px;border-bottom:1px solid #e2e8f0;font-size:13px;color:#1a202c;text-align:center;font-weight:600">${l.qty}</td>
+      <td style="padding:10px 14px;border-bottom:1px solid #e2e8f0;font-size:13px;color:#2b6cb0;text-align:right">$${l.unitPrice.toFixed(2)}</td>
+      <td style="padding:10px 14px;border-bottom:1px solid #e2e8f0;font-size:13px;color:#2b6cb0;font-weight:600;text-align:right">$${(l.qty*l.unitPrice).toFixed(2)}</td>
+      <td style="padding:10px 14px;border-bottom:1px solid #e2e8f0;font-size:13px;color:#718096;text-align:right">$____________</td>
+    </tr>`
+  ).join("");
+  const html = `<!DOCTYPE html><html><head><meta charset="UTF-8">
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:'Segoe UI',Arial,sans-serif;color:#1a202c;background:#fff;padding:0;}
+    @page{margin:18mm 20mm;}
+    @media print{body{padding:0;}}
+  </style></head><body>
+  <!-- Header Banner -->
+  <div style="background:linear-gradient(135deg,#1a365d 0%,#2b6cb0 100%);padding:28px 36px;margin-bottom:0;">
+    <div style="display:flex;justify-content:space-between;align-items:center;">
+      <div>
+        <div style="display:flex;align-items:center;gap:12;margin-bottom:8px;">
+          <div style="width:36px;height:36px;background:rgba(255,255,255,0.2);border-radius:8px;display:inline-flex;align-items:center;justify-content:center;margin-right:12px;">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 2L10 18M2 10L18 10" stroke="white" stroke-width="2.5" stroke-linecap="round"/><circle cx="10" cy="10" r="3" fill="white"/></svg>
+          </div>
+          <span style="font-size:22px;font-weight:700;color:white;letter-spacing:0.5px;">INVTRACK</span>
+          <span style="font-size:11px;color:rgba(255,255,255,0.6);margin-left:8px;letter-spacing:2px;font-weight:500;">MEDICAL PRO</span>
+        </div>
+        <div style="font-size:28px;font-weight:700;color:white;letter-spacing:-0.5px;">Quote Request Form</div>
+        <div style="font-size:13px;color:rgba(255,255,255,0.75);margin-top:4px;">Official Procurement Document</div>
+      </div>
+      <div style="text-align:right;">
+        <div style="background:rgba(255,255,255,0.15);border-radius:8px;padding:16px 20px;">
+          <div style="font-size:10px;color:rgba(255,255,255,0.6);letter-spacing:2px;margin-bottom:4px;">REFERENCE NO.</div>
+          <div style="font-size:20px;font-weight:700;color:white;font-family:monospace;">#${refNum}</div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.7);margin-top:6px;">${date}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Status Bar -->
+  <div style="background:#ebf4ff;border-bottom:2px solid #bee3f8;padding:10px 36px;display:flex;gap:32px;">
+    <div><span style="font-size:10px;color:#2c5282;letter-spacing:1px;font-weight:700;">STATUS</span><span style="margin-left:8px;background:#2b6cb0;color:white;border-radius:12px;padding:2px 10px;font-size:11px;font-weight:600;">${rfp.status}</span></div>
+    <div><span style="font-size:10px;color:#2c5282;letter-spacing:1px;font-weight:700;">ITEMS</span><span style="margin-left:8px;font-size:12px;color:#2d3748;font-weight:600;">${rfp.lines.length} line items</span></div>
+    <div><span style="font-size:10px;color:#2c5282;letter-spacing:1px;font-weight:700;">OUR ESTIMATE</span><span style="margin-left:8px;font-size:12px;color:#2d3748;font-weight:600;">$${rfp.subtotal?.toFixed(2)||"0.00"}</span></div>
+  </div>
+  <!-- Vendor & Billing Info -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:0;border-bottom:1px solid #e2e8f0;">
+    <div style="padding:20px 36px;border-right:1px solid #e2e8f0;">
+      <div style="font-size:10px;color:#718096;letter-spacing:2px;font-weight:700;margin-bottom:10px;">QUOTE REQUESTED FROM</div>
+      <div style="font-size:16px;font-weight:700;color:#1a202c;margin-bottom:4px;">${vendor?.name||"Vendor"}</div>
+      ${vendor?.contactName?`<div style="font-size:13px;color:#4a5568;margin-bottom:2px;">Attn: ${vendor.contactName}${vendor.contactTitle?" · "+vendor.contactTitle:""}</div>`:""}
+      ${vendor?.email?`<div style="font-size:13px;color:#2b6cb0;">${vendor.email}</div>`:""}
+      ${vendor?.contactPhone?`<div style="font-size:13px;color:#4a5568;">${vendor.contactPhone}</div>`:""}
+    </div>
+    <div style="padding:20px 36px;">
+      <div style="font-size:10px;color:#718096;letter-spacing:2px;font-weight:700;margin-bottom:10px;">REQUESTED BY</div>
+      <div style="font-size:14px;font-weight:600;color:#1a202c;margin-bottom:4px;">InvTrack Pro User</div>
+      <div style="font-size:13px;color:#4a5568;">Date Issued: ${date}</div>
+      <div style="font-size:13px;color:#4a5568;margin-top:2px;">Valid for: 30 days</div>
+      ${rfp.dueDate?`<div style="font-size:13px;color:#c53030;font-weight:600;margin-top:4px;">Response by: ${rfp.dueDate}</div>`:""}
+    </div>
+  </div>
+  <!-- Line Items Table -->
+  <div style="padding:24px 36px 0;">
+    <div style="font-size:11px;color:#718096;letter-spacing:2px;font-weight:700;margin-bottom:12px;">REQUESTED ITEMS</div>
+    <table style="width:100%;border-collapse:collapse;border:1px solid #e2e8f0;border-radius:8px;overflow:hidden;">
+      <thead>
+        <tr style="background:#2b6cb0;">
+          <th style="padding:11px 14px;text-align:left;font-size:11px;color:white;letter-spacing:0.5px;font-weight:600;">PRODUCT NAME</th>
+          <th style="padding:11px 14px;text-align:left;font-size:11px;color:white;letter-spacing:0.5px;font-weight:600;">SKU / CODE</th>
+          <th style="padding:11px 14px;text-align:left;font-size:11px;color:white;letter-spacing:0.5px;font-weight:600;">STRENGTH</th>
+          <th style="padding:11px 14px;text-align:center;font-size:11px;color:white;letter-spacing:0.5px;font-weight:600;">QTY</th>
+          <th style="padding:11px 14px;text-align:right;font-size:11px;color:white;letter-spacing:0.5px;font-weight:600;">OUR PRICE</th>
+          <th style="padding:11px 14px;text-align:right;font-size:11px;color:white;letter-spacing:0.5px;font-weight:600;">LINE TOTAL</th>
+          <th style="padding:11px 14px;text-align:right;font-size:11px;color:rgba(255,255,255,0.85);letter-spacing:0.5px;font-weight:600;">YOUR QUOTE</th>
+        </tr>
+      </thead>
+      <tbody>${rows}</tbody>
+    </table>
+  </div>
+  <!-- Totals + Reply Section -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;padding:24px 36px;">
+    <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:20px;">
+      <div style="font-size:11px;color:#718096;letter-spacing:2px;font-weight:700;margin-bottom:14px;">VENDOR REPLY — PLEASE COMPLETE</div>
+      <table style="width:100%;">
+        <tr><td style="padding:8px 0;font-size:13px;color:#4a5568;border-bottom:1px solid #e2e8f0;">Quote Total (USD)</td><td style="padding:8px 0;text-align:right;border-bottom:1px solid #e2e8f0;">$______________</td></tr>
+        <tr><td style="padding:8px 0;font-size:13px;color:#4a5568;border-bottom:1px solid #e2e8f0;">Shipping & Handling</td><td style="padding:8px 0;text-align:right;border-bottom:1px solid #e2e8f0;">$______________</td></tr>
+        <tr><td style="padding:8px 0;font-size:13px;color:#4a5568;border-bottom:2px solid #2b6cb0;">Taxes / Other Fees</td><td style="padding:8px 0;text-align:right;border-bottom:2px solid #2b6cb0;">$______________</td></tr>
+        <tr><td style="padding:10px 0;font-size:14px;font-weight:700;color:#1a202c;">GRAND TOTAL</td><td style="padding:10px 0;text-align:right;font-size:14px;font-weight:700;color:#2b6cb0;">$______________</td></tr>
+      </table>
+      <div style="margin-top:12px;"><div style="font-size:11px;color:#718096;margin-bottom:4px;">Estimated Lead Time:</div><div style="border-bottom:1px solid #cbd5e0;height:24px;"></div></div>
+      <div style="margin-top:10px;"><div style="font-size:11px;color:#718096;margin-bottom:4px;">Notes / Conditions:</div><div style="border-bottom:1px solid #cbd5e0;height:24px;margin-bottom:6px;"></div><div style="border-bottom:1px solid #cbd5e0;height:24px;"></div></div>
+    </div>
+    <div>
+      <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:20px;margin-bottom:16px;">
+        <div style="font-size:11px;color:#718096;letter-spacing:2px;font-weight:700;margin-bottom:12px;">OUR ESTIMATE SUMMARY</div>
+        <div style="display:flex;justify-content:space-between;padding:6px 0;font-size:13px;border-bottom:1px solid #e2e8f0;"><span style="color:#4a5568;">Subtotal</span><span style="color:#1a202c;font-weight:600;">$${rfp.subtotal?.toFixed(2)||"0.00"}</span></div>
+        <div style="display:flex;justify-content:space-between;padding:10px 0;font-size:16px;font-weight:700;"><span style="color:#1a202c;">Estimated Total</span><span style="color:#2b6cb0;">$${rfp.subtotal?.toFixed(2)||"0.00"}</span></div>
+      </div>
+      ${companyNotes?`<div style="background:#fffbeb;border:1px solid #f6e05e;border-radius:8px;padding:16px;"><div style="font-size:11px;color:#744210;letter-spacing:2px;font-weight:700;margin-bottom:8px;">NOTES</div><div style="font-size:13px;color:#744210;line-height:1.6;">${companyNotes}</div></div>`:""}
+    </div>
+  </div>
+  <!-- Signature Block -->
+  <div style="margin:0 36px 24px;border:1px solid #e2e8f0;border-radius:8px;padding:20px;background:#f8fafc;">
+    <div style="font-size:11px;color:#718096;letter-spacing:2px;font-weight:700;margin-bottom:14px;">VENDOR AUTHORIZATION</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:24px;">
+      <div><div style="font-size:11px;color:#718096;margin-bottom:4px;">Authorized Signature</div><div style="border-bottom:1px solid #cbd5e0;height:36px;"></div></div>
+      <div><div style="font-size:11px;color:#718096;margin-bottom:4px;">Printed Name & Title</div><div style="border-bottom:1px solid #cbd5e0;height:36px;"></div></div>
+      <div><div style="font-size:11px;color:#718096;margin-bottom:4px;">Date</div><div style="border-bottom:1px solid #cbd5e0;height:36px;"></div></div>
+    </div>
+  </div>
+  <!-- Footer -->
+  <div style="background:#1a365d;padding:14px 36px;display:flex;justify-content:space-between;align-items:center;">
+    <div style="font-size:11px;color:rgba(255,255,255,0.6);">Generated by InvTrack Medical Pro · ${new Date().toLocaleDateString()}</div>
+    <div style="font-size:11px;color:rgba(255,255,255,0.6);">Ref: #${refNum} · Confidential</div>
+  </div>
+  <script>window.onload=()=>window.print();</script>
+  </body></html>`;
+  const w = window.open("","_blank","width=900,height=700");
+  w.document.write(html); w.document.close();
+}
+
 function RFPs({store,update,log,showToast}){
-  const [sel,setSel]=useState(null);const [creating,setCreating]=useState(false);const [newRFP,setNewRFP]=useState({vendorId:"",lines:[]});const [filter,setFilter]=useState("all");
-  const rfp=sel?store.rfps.find(r=>r.id===sel):null;const rfpV=rfp?store.vendors.find(v=>v.id===rfp.vendorId):null;
+  const [sel,setSel]=useState(null);
+  const [mode,setMode]=useState("view"); // view | create | edit
+  const [draftRFP,setDraftRFP]=useState({vendorId:"",lines:[],notes:""});
+  const [filter,setFilter]=useState("all");
+
+  const rfp=sel?store.rfps.find(r=>r.id===sel):null;
+  const rfpV=rfp?store.vendors.find(v=>v.id===rfp.vendorId):null;
   const filtered=store.rfps.filter(r=>filter==="all"||r.status===filter);
-  function sub(lines){return lines.reduce((s,l)=>s+(l.qty*l.unitPrice),0);}
-  function savings(r){if(!r.vendorTotal||!r.subtotal)return 0;return Math.max(0,r.subtotal-parseFloat(r.vendorTotal));}
-  function create(){
-    if(!newRFP.vendorId)return showToast("Select a vendor",T.amber);
-    if(!newRFP.lines.length)return showToast("Add at least one line",T.amber);
-    const newId=uid();
-    const obj={...newRFP,id:newId,status:"Draft",subtotal:sub(newRFP.lines),createdAt:now()};
-    update(s=>{s.rfps=[obj,...s.rfps];return s;});
-    log("RFP created for "+(store.vendors.find(v=>v.id===newRFP.vendorId)?.name||""));
-    showToast("RFP created");setCreating(false);setNewRFP({vendorId:"",lines:[]});setSel(newId);
+
+  function calcSub(lines){return lines.reduce((s,l)=>s+(l.qty*(parseFloat(l.unitPrice)||0)),0);}
+
+  function saveRFP(){
+    if(!draftRFP.vendorId)return showToast("Select a vendor",T.amber);
+    if(!draftRFP.lines.length)return showToast("Add at least one line item",T.amber);
+    const subtotal=calcSub(draftRFP.lines);
+    if(mode==="create"){
+      const newId=uid();
+      const obj={...draftRFP,id:newId,status:"Draft",subtotal,createdAt:now()};
+      update(s=>{s.rfps=[obj,...s.rfps];return s;});
+      log("RFP created for "+(store.vendors.find(v=>v.id===draftRFP.vendorId)?.name||""));
+      showToast("Quote Request created");
+      setSel(newId);setMode("view");setDraftRFP({vendorId:"",lines:[],notes:""});
+    } else {
+      update(s=>{s.rfps=s.rfps.map(r=>r.id===sel?{...r,...draftRFP,subtotal}:r);return s;});
+      log("RFP updated");showToast("Quote Request updated");setMode("view");
+    }
   }
+
+  function startEdit(){
+    setDraftRFP({vendorId:rfp.vendorId,lines:rfp.lines.map(l=>({...l})),notes:rfp.notes||""});
+    setMode("edit");
+  }
+
+  function deleteRFP(id){
+    if(!confirm("Delete this Quote Request?"))return;
+    update(s=>{s.rfps=s.rfps.filter(r=>r.id!==id);return s;});
+    setSel(null);setMode("view");showToast("Deleted",T.red);
+  }
+
   function upd(id,patch){update(s=>{s.rfps=s.rfps.map(r=>r.id===id?{...r,...patch}:r);return s;});}
 
-  function RFPDetail(){
-    const [vt,setVt]=useState(rfp.vendorTotal||"");const [sh,setSh]=useState(rfp.shipping||"");
-    const sav=savings(rfp);
-    function saveReply(){const v=parseFloat(vt),s=parseFloat(sh)||0;upd(rfp.id,{vendorTotal:v,shipping:s,savings:Math.max(0,rfp.subtotal-v),status:"Quote Received"});showToast("Quote saved");}
+  // ── Line editor (shared for create + edit) ──────────────────────────────
+  function LineEditor({draft,setDraft}){
+    const vendor=store.vendors.find(v=>v.id===draft.vendorId);
+    const vp=vendor?.products||[];
+    const st=calcSub(draft.lines);
+    function ul(id,patch){setDraft(d=>({...d,lines:d.lines.map(l=>l.id===id?{...l,...patch}:l)}));}
+    function addLine(){
+      if(!vendor)return showToast("Select a vendor first",T.amber);
+      if(!vp.length)return showToast("Add products to this vendor first",T.amber);
+      const p=vp[0];
+      setDraft(d=>({...d,lines:[...d.lines,{id:uid(),productId:p.id,productName:p.name,sku:p.sku,strength:p.strength,unitPrice:parseFloat(p.price||0),qty:1}]}));
+    }
+    const th={textAlign:"left",padding:"7px 10px",fontSize:11,color:T.textMid,fontFamily:T.mono,borderBottom:`1px solid ${T.border}`,fontWeight:600,background:T.bgCard};
     return(
-      <div style={{maxWidth:720}}>
-        <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:24}}>
-          <div><h2 style={{fontSize:22,fontWeight:700,color:T.text,margin:0}}>RFP — {rfpV?.name}</h2><div style={{fontSize:11,color:T.textMid,fontFamily:T.mono,marginTop:4,fontWeight:500}}>#{rfp.id.slice(0,8).toUpperCase()} · {new Date(rfp.createdAt).toLocaleDateString()}</div></div>
+      <div>
+        <div style={{marginBottom:16}}>
+          <Lbl>Vendor</Lbl>
+          <select value={draft.vendorId} onChange={e=>setDraft(d=>({...d,vendorId:e.target.value,lines:[]}))} style={IS}>
+            <option value="">Select vendor...</option>
+            {store.vendors.map(v=><option key={v.id} value={v.id}>{v.name}</option>)}
+          </select>
         </div>
-        <div style={{marginBottom:16}}><Lbl>Status</Lbl><select value={rfp.status} onChange={e=>upd(rfp.id,{status:e.target.value})} style={{...IS,width:"auto",color:T.accent}}>{RFP_STATUSES.map(s=><option key={s}>{s}</option>)}</select></div>
-        <table style={{width:"100%",borderCollapse:"collapse",marginBottom:24}}>
-          <thead><tr>{["Product","SKU","Strength","Qty","Unit Price","Line Total"].map(h=><th key={h} style={{textAlign:"left",padding:"6px 8px",fontSize:11,color:T.textMid,fontFamily:T.mono,borderBottom:`1px solid ${T.border}`,fontWeight:700}}>{h}</th>)}</tr></thead>
-          <tbody>{rfp.lines.map(l=><tr key={l.id}><td style={{padding:"8px",fontSize:13,color:T.text,fontWeight:500}}>{l.productName}</td><td style={{padding:"8px",fontSize:12,color:T.textMid,fontFamily:T.mono}}>{l.sku}</td><td style={{padding:"8px",fontSize:12,color:T.textMid}}>{l.strength||"-"}</td><td style={{padding:"8px",fontSize:13,color:T.text,fontWeight:500}}>{l.qty}</td><td style={{padding:"8px",fontSize:13,color:T.accent,fontWeight:700}}>${l.unitPrice.toFixed(2)}</td><td style={{padding:"8px",fontSize:13,color:T.accent,fontWeight:700}}>${(l.qty*l.unitPrice).toFixed(2)}</td></tr>)}</tbody>
-        </table>
-        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:20}}>
-          <div style={{background:T.bgCard,border:`1px solid ${T.border}`,borderRadius:8,padding:20}}>
-            <div style={{fontSize:12,color:T.textMid,fontFamily:T.mono,letterSpacing:1,marginBottom:12,fontWeight:700}}>VENDOR REPLY</div>
-            <Lbl>Vendor Total ($)</Lbl><input type="number" value={vt} onChange={e=>setVt(e.target.value)} style={{...IS,marginBottom:12}} placeholder="0.00"/>
-            <Lbl>Shipping Fee ($)</Lbl><input type="number" value={sh} onChange={e=>setSh(e.target.value)} style={{...IS,marginBottom:12}} placeholder="0.00"/>
-            <Btn onClick={saveReply}>Save Reply</Btn>
+        {vendor&&<>
+          <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:10}}>
+            <Lbl>Line Items ({draft.lines.length})</Lbl>
+            <Btn small onClick={addLine}>+ Add Line</Btn>
           </div>
-          <div style={{background:T.bgCard,border:`1px solid ${T.border}`,borderRadius:8,padding:20}}>
-            <div style={{fontSize:12,color:T.textMid,fontFamily:T.mono,letterSpacing:1,marginBottom:12,fontWeight:700}}>SUMMARY</div>
-            <div style={{display:"flex",justifyContent:"space-between",marginBottom:8,fontSize:13}}><span style={{color:T.textMid,fontWeight:600}}>Our Estimate</span><span style={{color:T.text,fontWeight:600}}>${rfp.subtotal?.toFixed(2)}</span></div>
-            {rfp.vendorTotal&&<><div style={{display:"flex",justifyContent:"space-between",marginBottom:8,fontSize:13}}><span style={{color:T.textMid,fontWeight:600}}>Vendor Total</span><span style={{color:T.text,fontWeight:600}}>${parseFloat(rfp.vendorTotal).toFixed(2)}</span></div>
-            <div style={{borderTop:`1px solid ${T.border}`,paddingTop:12,marginTop:8}}>
-              <div style={{display:"flex",justifyContent:"space-between",fontSize:18,fontWeight:700}}><span style={{color:T.text}}>Grand Total</span><span style={{color:T.accent}}>${(parseFloat(rfp.vendorTotal)+parseFloat(rfp.shipping||0)).toFixed(2)}</span></div>
-              {sav>0&&<div style={{background:T.greenDim,border:`1px solid ${T.green}55`,borderRadius:6,padding:"10px 14px",marginTop:12,display:"flex",justifyContent:"space-between"}}><span style={{color:T.green,fontSize:13,fontWeight:600}}>💰 Savings</span><span style={{color:T.green,fontWeight:700,fontSize:16}}>${sav.toFixed(2)}</span></div>}
-            </div></>}
+          {draft.lines.length>0&&(
+            <div style={{border:`1px solid ${T.border}`,borderRadius:T.radius,overflow:"hidden",marginBottom:16}}>
+              <table style={{width:"100%",borderCollapse:"collapse"}}>
+                <thead><tr>
+                  {["Product","SKU","Strength","Unit Price","Qty","Line Total",""].map(h=>
+                    <th key={h} style={th}>{h}</th>
+                  )}
+                </tr></thead>
+                <tbody>{draft.lines.map(l=>(
+                  <tr key={l.id} style={{borderBottom:`1px solid ${T.border}`}}>
+                    <td style={{padding:"6px 8px"}}>
+                      <select value={l.productId||""} onChange={e=>{const p=vp.find(pp=>pp.id===e.target.value);if(p)ul(l.id,{productId:p.id,productName:p.name,sku:p.sku,strength:p.strength,unitPrice:parseFloat(p.price||0)});}} style={{...IS,padding:"4px 8px",fontSize:12}}>
+                        {vp.map(p=><option key={p.id} value={p.id}>{p.name}</option>)}
+                      </select>
+                    </td>
+                    <td style={{padding:"6px 8px",fontSize:12,color:T.textMid,fontFamily:T.mono}}>{l.sku}</td>
+                    <td style={{padding:"6px 8px",fontSize:12,color:T.textMid}}>{l.strength||"-"}</td>
+                    <td style={{padding:"6px 8px"}}>
+                      <input type="number" min="0" step="0.01" value={l.unitPrice} onChange={e=>ul(l.id,{unitPrice:parseFloat(e.target.value)||0})} style={{...IS,width:80,padding:"4px 8px"}}/>
+                    </td>
+                    <td style={{padding:"6px 8px"}}>
+                      <input type="number" min="1" value={l.qty} onChange={e=>ul(l.id,{qty:parseInt(e.target.value)||1})} style={{...IS,width:60,padding:"4px 8px",textAlign:"center"}}/>
+                    </td>
+                    <td style={{padding:"6px 8px",fontSize:13,color:T.accent,fontWeight:700}}>${(l.qty*(parseFloat(l.unitPrice)||0)).toFixed(2)}</td>
+                    <td style={{padding:"6px 8px",textAlign:"center"}}>
+                      <button onClick={()=>setDraft(d=>({...d,lines:d.lines.filter(ll=>ll.id!==l.id)}))} style={{background:"none",border:"none",color:T.red,cursor:"pointer",fontSize:16,fontWeight:700}}>×</button>
+                    </td>
+                  </tr>
+                ))}</tbody>
+              </table>
+            </div>
+          )}
+          <div style={{display:"flex",justifyContent:"flex-end",marginBottom:16}}>
+            <div style={{background:T.bgCard,border:`1px solid ${T.border}`,borderRadius:T.radius,padding:"10px 20px",fontSize:18,fontWeight:700,color:T.accent}}>
+              Subtotal: ${st.toFixed(2)}
+            </div>
           </div>
+        </>}
+        <div style={{marginBottom:16}}>
+          <Lbl>Notes / Special Instructions</Lbl>
+          <textarea value={draft.notes||""} onChange={e=>setDraft(d=>({...d,notes:e.target.value}))} style={{...IS,height:70,resize:"vertical"}} placeholder="Delivery instructions, special requirements..."/>
         </div>
       </div>
     );
   }
 
+  // ── RFP Detail View ───────────────────────────────────────────────────────
+  function RFPDetail(){
+    const [vt,setVt]=useState(rfp.vendorTotal||"");
+    const [sh,setSh]=useState(rfp.shipping||"");
+    const sav=rfp.vendorTotal?Math.max(0,rfp.subtotal-parseFloat(rfp.vendorTotal)):0;
+    function saveReply(){
+      const v=parseFloat(vt),s=parseFloat(sh)||0;
+      upd(rfp.id,{vendorTotal:v,shipping:s,savings:Math.max(0,rfp.subtotal-v),status:"Quote Received"});
+      showToast("Vendor reply saved");
+    }
+    const th={textAlign:"left",padding:"8px 12px",fontSize:11,color:T.textMid,fontFamily:T.mono,borderBottom:`1px solid ${T.border}`,fontWeight:600,background:T.bgCard};
+    return(
+      <div style={{maxWidth:780}}>
+        {/* Header */}
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:24,paddingBottom:20,borderBottom:`1px solid ${T.border}`}}>
+          <div>
+            <div style={{fontSize:10,color:T.accent,fontFamily:T.mono,letterSpacing:2,textTransform:"uppercase",marginBottom:6,fontWeight:600}}>Quote Request Form</div>
+            <h2 style={{fontSize:22,fontWeight:700,color:T.text,margin:0}}>{rfpV?.name}</h2>
+            <div style={{fontSize:11,color:T.textMid,fontFamily:T.mono,marginTop:4}}>#{rfp.id.slice(0,8).toUpperCase()} · {new Date(rfp.createdAt).toLocaleDateString()}</div>
+          </div>
+          <div style={{display:"flex",gap:8,flexWrap:"wrap",justifyContent:"flex-end"}}>
+            <Btn small onClick={()=>downloadRFPpdf(rfp,rfpV,rfp.notes)}>⬇ Download PDF</Btn>
+            <Btn small ghost onClick={startEdit}>✎ Edit</Btn>
+            <Btn small danger onClick={()=>deleteRFP(rfp.id)}>Delete</Btn>
+          </div>
+        </div>
+        {/* Status */}
+        <div style={{display:"flex",gap:12,alignItems:"center",marginBottom:20}}>
+          <Lbl>Status:</Lbl>
+          <select value={rfp.status} onChange={e=>upd(rfp.id,{status:e.target.value})} style={{...IS,width:"auto"}}>
+            {RFP_STATUSES.map(s=><option key={s}>{s}</option>)}
+          </select>
+          <SBadge status={rfp.status}/>
+        </div>
+        {/* Line Items */}
+        <div style={{border:`1px solid ${T.border}`,borderRadius:T.radius,overflow:"hidden",marginBottom:20}}>
+          <table style={{width:"100%",borderCollapse:"collapse"}}>
+            <thead><tr>{["Product","SKU","Strength","Qty","Unit Price","Line Total"].map(h=><th key={h} style={th}>{h}</th>)}</tr></thead>
+            <tbody>{rfp.lines.map((l,i)=>(
+              <tr key={l.id} style={{borderBottom:`1px solid ${T.border}`,background:i%2===0?"transparent":T.bgCard+"80"}}>
+                <td style={{padding:"10px 12px",fontSize:13,color:T.text,fontWeight:500}}>{l.productName}</td>
+                <td style={{padding:"10px 12px",fontSize:12,color:T.textMid,fontFamily:T.mono}}>{l.sku||"—"}</td>
+                <td style={{padding:"10px 12px",fontSize:12,color:T.textMid}}>{l.strength||"—"}</td>
+                <td style={{padding:"10px 12px",fontSize:13,color:T.text,fontWeight:600}}>{l.qty}</td>
+                <td style={{padding:"10px 12px",fontSize:13,color:T.accent}}>${(parseFloat(l.unitPrice)||0).toFixed(2)}</td>
+                <td style={{padding:"10px 12px",fontSize:13,color:T.accent,fontWeight:700}}>${(l.qty*(parseFloat(l.unitPrice)||0)).toFixed(2)}</td>
+              </tr>
+            ))}</tbody>
+          </table>
+        </div>
+        <div style={{display:"flex",justifyContent:"flex-end",marginBottom:20}}>
+          <div style={{background:T.bgCard,border:`1px solid ${T.border}`,borderRadius:T.radius,padding:"10px 20px"}}>
+            <span style={{fontSize:13,color:T.textMid,marginRight:16}}>Our Estimate:</span>
+            <span style={{fontSize:20,fontWeight:700,color:T.accent}}>${rfp.subtotal?.toFixed(2)||"0.00"}</span>
+          </div>
+        </div>
+        {/* Vendor Reply + Summary */}
+        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:16,marginBottom:rfp.notes?16:0}}>
+          <div style={{background:T.bgCard,border:`1px solid ${T.border}`,borderRadius:T.radius,padding:18}}>
+            <div style={{fontSize:11,color:T.textMid,fontFamily:T.mono,letterSpacing:1.5,fontWeight:700,marginBottom:14,textTransform:"uppercase"}}>Vendor Reply</div>
+            <Lbl>Vendor Total ($)</Lbl>
+            <input type="number" value={vt} onChange={e=>setVt(e.target.value)} style={{...IS,marginBottom:10}} placeholder="0.00"/>
+            <Lbl>Shipping & Handling ($)</Lbl>
+            <input type="number" value={sh} onChange={e=>setSh(e.target.value)} style={{...IS,marginBottom:14}} placeholder="0.00"/>
+            <Btn onClick={saveReply}>Save Vendor Reply</Btn>
+          </div>
+          <div style={{background:T.bgCard,border:`1px solid ${T.border}`,borderRadius:T.radius,padding:18}}>
+            <div style={{fontSize:11,color:T.textMid,fontFamily:T.mono,letterSpacing:1.5,fontWeight:700,marginBottom:14,textTransform:"uppercase"}}>Summary</div>
+            {[["Our Estimate",`$${rfp.subtotal?.toFixed(2)||"0.00"}`],rfp.vendorTotal&&["Vendor Quote",`$${parseFloat(rfp.vendorTotal).toFixed(2)}`],rfp.shipping>0&&["Shipping",`$${parseFloat(rfp.shipping).toFixed(2)}`]].filter(Boolean).map(([l,v])=>(
+              <div key={l} style={{display:"flex",justifyContent:"space-between",padding:"7px 0",borderBottom:`1px solid ${T.border}`,fontSize:13}}>
+                <span style={{color:T.textMid}}>{l}</span>
+                <span style={{color:T.text,fontWeight:600}}>{v}</span>
+              </div>
+            ))}
+            {rfp.vendorTotal&&<div style={{display:"flex",justifyContent:"space-between",padding:"12px 0 0",fontSize:18,fontWeight:700}}>
+              <span style={{color:T.text}}>Grand Total</span>
+              <span style={{color:T.accent}}>${(parseFloat(rfp.vendorTotal)+(parseFloat(rfp.shipping)||0)).toFixed(2)}</span>
+            </div>}
+            {sav>0&&<div style={{background:T.greenDim,border:`1px solid ${T.green}44`,borderRadius:T.radius,padding:"10px 14px",marginTop:12,display:"flex",justifyContent:"space-between"}}>
+              <span style={{color:T.green,fontWeight:600}}>💰 Savings</span>
+              <span style={{color:T.green,fontWeight:700,fontSize:16}}>${sav.toFixed(2)}</span>
+            </div>}
+          </div>
+        </div>
+        {rfp.notes&&<div style={{background:T.bgCard,border:`1px solid ${T.border}`,borderRadius:T.radius,padding:16}}>
+          <div style={{fontSize:11,color:T.textMid,fontFamily:T.mono,letterSpacing:1.5,fontWeight:700,marginBottom:8,textTransform:"uppercase"}}>Notes</div>
+          <div style={{fontSize:13,color:T.text,lineHeight:1.7,whiteSpace:"pre-wrap"}}>{rfp.notes}</div>
+        </div>}
+      </div>
+    );
+  }
+
+  const isEditing = mode==="create"||mode==="edit";
+
   return(
     <div style={{display:"flex",height:"100%",overflow:"hidden"}}>
-      <div style={{width:280,borderRight:`1px solid ${T.border}`,overflow:"auto",padding:20}}>
-        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16}}><h3 style={{margin:0,fontSize:16,color:T.accent,fontWeight:700}}>RFPs</h3><Btn small onClick={()=>{setCreating(true);setSel(null);}}>+ New</Btn></div>
-        <select value={filter} onChange={e=>setFilter(e.target.value)} style={{...IS,marginBottom:12}}><option value="all">All Statuses</option>{RFP_STATUSES.map(s=><option key={s}>{s}</option>)}</select>
-        {filtered.map(r=>{const v=store.vendors.find(vv=>vv.id===r.vendorId);return(
-          <div key={r.id} onClick={()=>{setSel(r.id);setCreating(false);}} style={{padding:"10px 12px",borderRadius:6,cursor:"pointer",background:sel===r.id?T.bgPanel:"transparent",border:sel===r.id?`1px solid ${T.borderHi}`:"1px solid transparent",marginTop:6}}>
-            <div style={{display:"flex",justifyContent:"space-between"}}><span style={{fontSize:13,color:T.text,fontWeight:600}}>{v?.name||"Unknown"}</span><SBadge status={r.status}/></div>
-            <div style={{fontSize:11,color:T.textMid,fontFamily:T.mono,marginTop:3,fontWeight:500}}>{new Date(r.createdAt).toLocaleDateString()} · {r.lines.length} items · ${r.subtotal?.toFixed(2)}</div>
+      {/* Sidebar */}
+      <div style={{width:280,borderRight:`1px solid ${T.border}`,overflow:"auto",padding:20,flexShrink:0}}>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16}}>
+          <div>
+            <div style={{fontSize:10,color:T.textDim,fontFamily:T.mono,letterSpacing:1.5,textTransform:"uppercase",fontWeight:600,marginBottom:2}}>Procurement</div>
+            <h3 style={{margin:0,fontSize:15,color:T.text,fontWeight:600}}>Quote Requests</h3>
           </div>
-        );})}
-        {!filtered.length&&<div style={{color:T.textMid,fontSize:12,marginTop:16,fontWeight:500}}>No RFPs</div>}
-      </div>
-      <div style={{flex:1,overflow:"auto",padding:"32px 36px"}}>
-        {creating&&(()=>{
-          const vendor=store.vendors.find(v=>v.id===newRFP.vendorId);const vp=vendor?.products||[];const st=newRFP.lines.reduce((s,l)=>s+(l.qty*l.unitPrice),0);
-          function ul(id,patch){setNewRFP(r=>({...r,lines:r.lines.map(l=>l.id===id?{...l,...patch}:l)}));}
-          function addLine(){if(!vp.length)return showToast("Add products to this vendor first",T.amber);const p=vp[0];setNewRFP(r=>({...r,lines:[...r.lines,{id:uid(),productId:p.id,productName:p.name,sku:p.sku,strength:p.strength,unitPrice:parseFloat(p.price||0),qty:1}]}));}
+          <Btn small onClick={()=>{setMode("create");setSel(null);setDraftRFP({vendorId:"",lines:[],notes:""});}}>+ New</Btn>
+        </div>
+        <select value={filter} onChange={e=>setFilter(e.target.value)} style={{...IS,marginBottom:12}}>
+          <option value="all">All Statuses</option>
+          {RFP_STATUSES.map(s=><option key={s}>{s}</option>)}
+        </select>
+        {filtered.map(r=>{
+          const v=store.vendors.find(vv=>vv.id===r.vendorId);
           return(
-            <div style={{maxWidth:700}}>
-              <h3 style={{fontSize:22,fontWeight:700,color:T.text,marginBottom:24}}>New RFP</h3>
-              <Lbl>Vendor</Lbl>
-              <select value={newRFP.vendorId} onChange={e=>setNewRFP({...newRFP,vendorId:e.target.value,lines:[]})} style={{...IS,marginBottom:24}}><option value="">Select vendor...</option>{store.vendors.map(v=><option key={v.id} value={v.id}>{v.name}</option>)}</select>
-              {vendor&&<>
-                <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:12}}><Lbl>Line Items</Lbl><Btn small onClick={addLine}>+ Add Line</Btn></div>
-                {newRFP.lines.length>0&&<table style={{width:"100%",borderCollapse:"collapse",marginBottom:16}}>
-                  <thead><tr>{["Product","SKU","Strength","Unit Price","Qty","Line Total",""].map(h=><th key={h} style={{textAlign:"left",padding:"6px 8px",fontSize:11,color:T.textMid,fontFamily:T.mono,borderBottom:`1px solid ${T.border}`,fontWeight:700}}>{h}</th>)}</tr></thead>
-                  <tbody>{newRFP.lines.map(l=><tr key={l.id}>
-                    <td style={{padding:"6px 8px"}}><select value={l.productId} onChange={e=>{const p=vp.find(pp=>pp.id===e.target.value);if(p)ul(l.id,{productId:p.id,productName:p.name,sku:p.sku,strength:p.strength,unitPrice:parseFloat(p.price||0)});}} style={{...IS,padding:"4px 8px",fontSize:12}}>{vp.map(p=><option key={p.id} value={p.id}>{p.name}</option>)}</select></td>
-                    <td style={{padding:"6px 8px",fontSize:12,color:T.textMid,fontFamily:T.mono,fontWeight:500}}>{l.sku}</td>
-                    <td style={{padding:"6px 8px",fontSize:12,color:T.textMid,fontWeight:500}}>{l.strength||"-"}</td>
-                    <td style={{padding:"6px 8px",fontSize:13,color:T.accent,fontWeight:700}}>${l.unitPrice.toFixed(2)}</td>
-                    <td style={{padding:"6px 8px"}}><input type="number" min="1" value={l.qty} onChange={e=>ul(l.id,{qty:parseInt(e.target.value)||1})} style={{...IS,width:60,padding:"4px 8px",textAlign:"center"}}/></td>
-                    <td style={{padding:"6px 8px",fontSize:13,color:T.accent,fontWeight:700}}>${(l.qty*l.unitPrice).toFixed(2)}</td>
-                    <td><button onClick={()=>setNewRFP(r=>({...r,lines:r.lines.filter(ll=>ll.id!==l.id)}))} style={{background:"none",border:"none",color:T.textMid,cursor:"pointer"}}>✕</button></td>
-                  </tr>)}</tbody>
-                </table>}
-                <div style={{textAlign:"right",fontSize:20,color:T.accent,marginBottom:24,fontWeight:700}}>Subtotal: ${st.toFixed(2)}</div>
-              </>}
-              <div style={{display:"flex",gap:10}}><Btn onClick={create}>Create RFP</Btn><Btn ghost onClick={()=>setCreating(false)}>Cancel</Btn></div>
+            <div key={r.id} style={{marginTop:6}}>
+              <div onClick={()=>{setSel(r.id);setMode("view");}}
+                style={{padding:"10px 12px",borderRadius:T.radius,cursor:"pointer",background:sel===r.id&&mode==="view"?T.bgPanel:"transparent",border:sel===r.id&&mode==="view"?`1px solid ${T.borderHi}`:"1px solid transparent",transition:"all 0.1s"}}>
+                <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+                  <span style={{fontSize:13,color:T.text,fontWeight:600,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap",maxWidth:130}}>{v?.name||"Unknown"}</span>
+                  <SBadge status={r.status}/>
+                </div>
+                <div style={{fontSize:11,color:T.textMid,fontFamily:T.mono,marginTop:3}}>{new Date(r.createdAt).toLocaleDateString()} · {r.lines.length} items · ${r.subtotal?.toFixed(2)||"0.00"}</div>
+                <div style={{display:"flex",gap:4,marginTop:6}}>
+                  <button onClick={e=>{e.stopPropagation();setSel(r.id);setMode("view");}} style={{fontSize:10,padding:"2px 8px",borderRadius:4,border:`1px solid ${T.border}`,background:"transparent",color:T.textMid,cursor:"pointer",fontFamily:T.font}}>View</button>
+                  <button onClick={e=>{e.stopPropagation();setSel(r.id);const rfpToEdit=store.rfps.find(rr=>rr.id===r.id);if(rfpToEdit){setDraftRFP({vendorId:rfpToEdit.vendorId,lines:rfpToEdit.lines.map(l=>({...l})),notes:rfpToEdit.notes||""});setMode("edit");}}} style={{fontSize:10,padding:"2px 8px",borderRadius:4,border:`1px solid ${T.border}`,background:"transparent",color:T.textMid,cursor:"pointer",fontFamily:T.font}}>Edit</button>
+                  <button onClick={e=>{e.stopPropagation();if(!confirm("Delete this RFP?"))return;update(s=>{s.rfps=s.rfps.filter(rr=>rr.id!==r.id);return s;});if(sel===r.id){setSel(null);setMode("view");}}} style={{fontSize:10,padding:"2px 8px",borderRadius:4,border:`1px solid ${T.red}44`,background:"transparent",color:T.red,cursor:"pointer",fontFamily:T.font}}>Delete</button>
+                </div>
+              </div>
             </div>
           );
-        })()}
-        {rfp&&!creating&&<RFPDetail/>}
-        {!rfp&&!creating&&<div style={{color:T.textMid,marginTop:80,textAlign:"center",fontSize:14,fontWeight:500}}>Select an RFP or create one</div>}
+        })}
+        {!filtered.length&&<div style={{color:T.textMid,fontSize:12,marginTop:20,textAlign:"center"}}>No quote requests yet</div>}
+      </div>
+      {/* Main */}
+      <div style={{flex:1,overflow:"auto",padding:"32px 36px"}}>
+        {isEditing&&(
+          <div style={{maxWidth:740}}>
+            <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:24,paddingBottom:20,borderBottom:`1px solid ${T.border}`}}>
+              <div>
+                <div style={{fontSize:10,color:T.accent,fontFamily:T.mono,letterSpacing:2,textTransform:"uppercase",marginBottom:6,fontWeight:600}}>{mode==="create"?"New Document":"Edit Document"}</div>
+                <h2 style={{fontSize:22,fontWeight:700,color:T.text,margin:0}}>{mode==="create"?"New Quote Request":"Edit Quote Request"}</h2>
+              </div>
+              <Btn ghost onClick={()=>{setMode(sel?"view":"view");setDraftRFP({vendorId:"",lines:[],notes:""});}}>Cancel</Btn>
+            </div>
+            <LineEditor draft={draftRFP} setDraft={setDraftRFP}/>
+            <div style={{display:"flex",gap:10}}>
+              <Btn primary onClick={saveRFP}>{mode==="create"?"Create Quote Request":"Save Changes"}</Btn>
+              <Btn ghost onClick={()=>{setMode(sel?"view":"view");}}> Cancel</Btn>
+            </div>
+          </div>
+        )}
+        {rfp&&mode==="view"&&<RFPDetail/>}
+        {!rfp&&mode==="view"&&<div style={{color:T.textMid,marginTop:80,textAlign:"center",fontSize:14}}>Select a quote request or create a new one</div>}
       </div>
     </div>
   );
@@ -776,9 +1157,18 @@ function Inventory({store,update,log,showToast,lowStock,outOfStock}){
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16}}><h3 style={{margin:0,fontSize:16,color:T.accent,fontWeight:700}}>Inventory</h3><Btn small onClick={()=>{setForm({name:"",sku:"",qty:0,costPrice:0,salePrice:0,strength:"",reorderAt:5,category:""});setSel(null);}}>+ Add</Btn></div>
         <input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Search name/SKU..." style={{...IS,marginBottom:8}}/>
         {filtered.map(i=>(
-          <div key={i.id} onClick={()=>{setSel(i.id);setForm(null);}} style={{padding:"10px 12px",borderRadius:6,cursor:"pointer",background:sel===i.id?T.bgPanel:"transparent",border:sel===i.id?`1px solid ${T.borderHi}`:"1px solid transparent",marginTop:6}}>
-            <div style={{display:"flex",justifyContent:"space-between"}}><span style={{fontSize:13,color:T.text,fontWeight:600}}>{i.name}</span><span style={{color:sc(i),fontSize:12,fontWeight:700}}>{i.qty}</span></div>
-            <div style={{fontSize:11,color:T.textMid,fontFamily:T.mono,fontWeight:500}}>{i.sku||"No SKU"} · ${parseFloat(i.salePrice||0).toFixed(2)}</div>
+          <div key={i.id} style={{position:"relative",marginTop:6}} className="sidebar-item">
+            <div onClick={()=>{setSel(i.id);setForm(null);}} style={{padding:"10px 12px",borderRadius:6,cursor:"pointer",background:sel===i.id?T.bgPanel:"transparent",border:sel===i.id?`1px solid ${T.borderHi}`:"1px solid transparent"}}>
+              <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+                <span style={{fontSize:13,color:T.text,fontWeight:600,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap",maxWidth:160}}>{i.name}</span>
+                <span style={{color:sc(i),fontSize:12,fontWeight:700,flexShrink:0}}>{i.qty}</span>
+              </div>
+              <div style={{fontSize:11,color:T.textMid,fontFamily:T.mono,marginTop:2}}>{i.sku||"No SKU"} · ${parseFloat(i.salePrice||0).toFixed(2)}</div>
+              <div style={{display:"flex",gap:4,marginTop:6}}>
+                <button onClick={e=>{e.stopPropagation();setSel(i.id);setForm({...i});}} style={{fontSize:10,padding:"2px 8px",borderRadius:4,border:`1px solid ${T.border}`,background:"transparent",color:T.textMid,cursor:"pointer",fontFamily:T.font}}>Edit</button>
+                <button onClick={e=>{e.stopPropagation();if(!confirm("Delete "+i.name+"?"))return;update(s=>{s.inventory=s.inventory.filter(ii=>ii.id!==i.id);return s;});if(sel===i.id)setSel(null);}} style={{fontSize:10,padding:"2px 8px",borderRadius:4,border:`1px solid ${T.red}44`,background:"transparent",color:T.red,cursor:"pointer",fontFamily:T.font}}>Delete</button>
+              </div>
+            </div>
           </div>
         ))}
       </div>
@@ -845,10 +1235,18 @@ function Clients({store,update,log,showToast}){
       <div style={{width:260,borderRight:`1px solid ${T.border}`,overflow:"auto",padding:20}}>
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16}}><h3 style={{margin:0,fontSize:16,color:T.accent,fontWeight:700}}>Clients</h3><Btn small onClick={()=>{setForm({name:"",email:"",phone:"",address:"",notes:""});setSel(null);}}>+ New</Btn></div>
         <input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Search..." style={{...IS,marginBottom:8}}/>
-        {filtered.map(c=><div key={c.id} onClick={()=>{setSel(c.id);setForm(null);}} style={{padding:"10px 12px",borderRadius:6,cursor:"pointer",background:sel===c.id?T.bgPanel:"transparent",border:sel===c.id?`1px solid ${T.borderHi}`:"1px solid transparent",marginTop:6}}>
-          <div style={{fontSize:14,color:sel===c.id?T.accent:T.text,fontWeight:600}}>{c.name}</div>
-          <div style={{fontSize:11,color:T.textMid,fontWeight:500}}>{c.email}</div>
-        </div>)}
+        {filtered.map(c=>(
+          <div key={c.id} style={{marginTop:6}}>
+            <div onClick={()=>{setSel(c.id);setForm(null);}} style={{padding:"10px 12px",borderRadius:6,cursor:"pointer",background:sel===c.id?T.bgPanel:"transparent",border:sel===c.id?`1px solid ${T.borderHi}`:"1px solid transparent"}}>
+              <div style={{fontSize:13,color:sel===c.id?T.accent:T.text,fontWeight:600}}>{c.name}</div>
+              <div style={{fontSize:11,color:T.textMid,marginTop:1}}>{c.email||"No email"}</div>
+              <div style={{display:"flex",gap:4,marginTop:6}}>
+                <button onClick={e=>{e.stopPropagation();setSel(c.id);setForm({...c});}} style={{fontSize:10,padding:"2px 8px",borderRadius:4,border:`1px solid ${T.border}`,background:"transparent",color:T.textMid,cursor:"pointer",fontFamily:T.font}}>Edit</button>
+                <button onClick={e=>{e.stopPropagation();if(!confirm("Delete "+c.name+"?"))return;update(s=>{s.clients=s.clients.filter(cc=>cc.id!==c.id);return s;});if(sel===c.id)setSel(null);}} style={{fontSize:10,padding:"2px 8px",borderRadius:4,border:`1px solid ${T.red}44`,background:"transparent",color:T.red,cursor:"pointer",fontFamily:T.font}}>Delete</button>
+              </div>
+            </div>
+          </div>
+        ))}
         {!filtered.length&&<div style={{color:T.textMid,fontSize:12,marginTop:16,textAlign:"center",fontWeight:500}}>No clients yet</div>}
       </div>
       <div style={{flex:1,overflow:"auto",padding:"32px 36px"}}>
@@ -883,87 +1281,426 @@ function Clients({store,update,log,showToast}){
   );
 }
 
+// ── Invoice PDF Export ────────────────────────────────────────────────────────
+function downloadInvoicePDF(inv, client, store) {
+  const date = new Date(inv.createdAt).toLocaleDateString("en-US",{year:"numeric",month:"long",day:"numeric"});
+  const refNum = inv.id.slice(0,8).toUpperCase();
+  const rows = inv.lines.map((l,i) =>
+    `<tr style="background:${i%2===0?"#f8fafc":"#ffffff"}">
+      <td style="padding:10px 14px;border-bottom:1px solid #e2e8f0;font-size:13px;color:#1a202c;font-weight:500">${l.productName}</td>
+      <td style="padding:10px 14px;border-bottom:1px solid #e2e8f0;font-size:12px;color:#4a5568;font-family:monospace">${l.sku||"—"}</td>
+      <td style="padding:10px 14px;border-bottom:1px solid #e2e8f0;font-size:12px;color:#4a5568">${l.strength||"—"}</td>
+      <td style="padding:10px 14px;border-bottom:1px solid #e2e8f0;font-size:13px;color:#1a202c;text-align:center;font-weight:600">${l.qty}</td>
+      <td style="padding:10px 14px;border-bottom:1px solid #e2e8f0;font-size:13px;color:#2b6cb0;text-align:right">$${parseFloat(l.unitPrice).toFixed(2)}</td>
+      <td style="padding:10px 14px;border-bottom:1px solid #e2e8f0;font-size:13px;color:#2b6cb0;font-weight:700;text-align:right">$${(l.qty*parseFloat(l.unitPrice)).toFixed(2)}</td>
+    </tr>`
+  ).join("");
+  const html = `<!DOCTYPE html><html><head><meta charset="UTF-8">
+  <style>*{box-sizing:border-box;margin:0;padding:0;}body{font-family:'Segoe UI',Arial,sans-serif;color:#1a202c;background:#fff;}@page{margin:18mm 20mm;}@media print{body{padding:0;}}</style>
+  </head><body>
+  <div style="background:linear-gradient(135deg,#1a365d 0%,#2b6cb0 100%);padding:28px 36px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;">
+      <div>
+        <div style="display:flex;align-items:center;margin-bottom:8px;">
+          <div style="width:36px;height:36px;background:rgba(255,255,255,0.2);border-radius:8px;display:inline-flex;align-items:center;justify-content:center;margin-right:12px;">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 2L10 18M2 10L18 10" stroke="white" stroke-width="2.5" stroke-linecap="round"/><circle cx="10" cy="10" r="3" fill="white"/></svg>
+          </div>
+          <span style="font-size:20px;font-weight:700;color:white;">INVTRACK</span>
+          <span style="font-size:10px;color:rgba(255,255,255,0.6);margin-left:8px;letter-spacing:2px;">MEDICAL PRO</span>
+        </div>
+        <div style="font-size:30px;font-weight:700;color:white;letter-spacing:-0.5px;">INVOICE</div>
+      </div>
+      <div style="text-align:right;background:rgba(255,255,255,0.15);border-radius:8px;padding:16px 20px;">
+        <div style="font-size:10px;color:rgba(255,255,255,0.6);letter-spacing:2px;margin-bottom:4px;">INVOICE NO.</div>
+        <div style="font-size:20px;font-weight:700;color:white;font-family:monospace;">#${refNum}</div>
+        <div style="font-size:11px;color:rgba(255,255,255,0.7);margin-top:6px;">${date}</div>
+      </div>
+    </div>
+  </div>
+  <div style="background:#ebf4ff;border-bottom:2px solid #bee3f8;padding:10px 36px;display:flex;gap:32px;">
+    <div><span style="font-size:10px;color:#2c5282;letter-spacing:1px;font-weight:700;">STATUS</span><span style="margin-left:8px;background:#2b6cb0;color:white;border-radius:12px;padding:2px 10px;font-size:11px;font-weight:600;">${inv.status}</span></div>
+    <div><span style="font-size:10px;color:#2c5282;letter-spacing:1px;font-weight:700;">DUE DATE</span><span style="margin-left:8px;font-size:12px;color:#2d3748;font-weight:600;">${inv.dueDate||"Net 30"}</span></div>
+    <div><span style="font-size:10px;color:#2c5282;letter-spacing:1px;font-weight:700;">ITEMS</span><span style="margin-left:8px;font-size:12px;color:#2d3748;font-weight:600;">${inv.lines.length}</span></div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:0;border-bottom:1px solid #e2e8f0;">
+    <div style="padding:20px 36px;border-right:1px solid #e2e8f0;">
+      <div style="font-size:10px;color:#718096;letter-spacing:2px;font-weight:700;margin-bottom:10px;">BILL TO</div>
+      <div style="font-size:17px;font-weight:700;color:#1a202c;margin-bottom:4px;">${client?.name||"Client"}</div>
+      ${client?.email?`<div style="font-size:13px;color:#4a5568;">${client.email}</div>`:""}
+      ${client?.phone?`<div style="font-size:13px;color:#4a5568;">${client.phone}</div>`:""}
+      ${client?.address?`<div style="font-size:13px;color:#4a5568;margin-top:4px;">${client.address}</div>`:""}
+    </div>
+    <div style="padding:20px 36px;">
+      <div style="font-size:10px;color:#718096;letter-spacing:2px;font-weight:700;margin-bottom:10px;">FROM</div>
+      <div style="font-size:14px;font-weight:600;color:#1a202c;margin-bottom:4px;">InvTrack Pro</div>
+      <div style="font-size:13px;color:#4a5568;">Invoice Date: ${date}</div>
+      ${inv.dueDate?`<div style="font-size:13px;color:#c53030;font-weight:600;margin-top:4px;">Due: ${inv.dueDate}</div>`:""}
+    </div>
+  </div>
+  <div style="padding:24px 36px 0;">
+    <div style="font-size:11px;color:#718096;letter-spacing:2px;font-weight:700;margin-bottom:12px;">ITEMS</div>
+    <table style="width:100%;border-collapse:collapse;border:1px solid #e2e8f0;overflow:hidden;">
+      <thead>
+        <tr style="background:#2b6cb0;">
+          <th style="padding:11px 14px;text-align:left;font-size:11px;color:white;font-weight:600;letter-spacing:0.5px;">PRODUCT NAME</th>
+          <th style="padding:11px 14px;text-align:left;font-size:11px;color:white;font-weight:600;">SKU</th>
+          <th style="padding:11px 14px;text-align:left;font-size:11px;color:white;font-weight:600;">STRENGTH</th>
+          <th style="padding:11px 14px;text-align:center;font-size:11px;color:white;font-weight:600;">QTY</th>
+          <th style="padding:11px 14px;text-align:right;font-size:11px;color:white;font-weight:600;">UNIT PRICE</th>
+          <th style="padding:11px 14px;text-align:right;font-size:11px;color:white;font-weight:600;">TOTAL</th>
+        </tr>
+      </thead>
+      <tbody>${rows}</tbody>
+    </table>
+  </div>
+  <div style="display:flex;justify-content:flex-end;padding:20px 36px 0;">
+    <div style="width:280px;">
+      <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #e2e8f0;font-size:13px;"><span style="color:#718096;">Subtotal</span><span style="font-weight:600;color:#1a202c;">$${inv.subtotal.toFixed(2)}</span></div>
+      ${inv.tax>0?`<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #e2e8f0;font-size:13px;"><span style="color:#718096;">Tax (${inv.taxRate}%)</span><span style="font-weight:600;color:#1a202c;">$${inv.tax.toFixed(2)}</span></div>`:""}
+      <div style="display:flex;justify-content:space-between;padding:12px 0;font-size:20px;font-weight:700;border-top:2px solid #2b6cb0;margin-top:4px;"><span style="color:#1a202c;">TOTAL DUE</span><span style="color:#2b6cb0;">$${inv.total.toFixed(2)}</span></div>
+    </div>
+  </div>
+  ${inv.notes?`<div style="margin:20px 36px 0;background:#fffbeb;border:1px solid #f6e05e;border-radius:8px;padding:14px 16px;"><div style="font-size:10px;color:#744210;letter-spacing:2px;font-weight:700;margin-bottom:6px;">NOTES</div><div style="font-size:13px;color:#744210;line-height:1.6;">${inv.notes}</div></div>`:""}
+  <div style="margin:24px 36px;border:1px solid #e2e8f0;border-radius:8px;padding:18px;background:#f8fafc;">
+    <div style="font-size:11px;color:#718096;letter-spacing:2px;font-weight:700;margin-bottom:12px;">PAYMENT INFORMATION</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;">
+      <div><div style="font-size:11px;color:#718096;margin-bottom:4px;">Payment Method</div><div style="border-bottom:1px solid #cbd5e0;height:28px;"></div></div>
+      <div><div style="font-size:11px;color:#718096;margin-bottom:4px;">Reference / Check #</div><div style="border-bottom:1px solid #cbd5e0;height:28px;"></div></div>
+      <div><div style="font-size:11px;color:#718096;margin-bottom:4px;">Date Paid</div><div style="border-bottom:1px solid #cbd5e0;height:28px;"></div></div>
+    </div>
+  </div>
+  <div style="background:#1a365d;padding:14px 36px;display:flex;justify-content:space-between;align-items:center;">
+    <div style="font-size:11px;color:rgba(255,255,255,0.6);">Generated by InvTrack Medical Pro · ${new Date().toLocaleDateString()}</div>
+    <div style="font-size:11px;color:rgba(255,255,255,0.6);">Invoice #${refNum} · Thank you for your business</div>
+  </div>
+  <script>window.onload=()=>window.print();</script>
+  </body></html>`;
+  const w = window.open("","_blank","width=900,height=700");
+  w.document.write(html); w.document.close();
+}
+
 function Invoices({store,update,log,showToast}){
-  const [sel,setSel]=useState(null);const [creating,setCreating]=useState(false);const [newInv,setNewInv]=useState({clientId:"",lines:[],taxRate:0,dueDate:"",notes:""});const [filter,setFilter]=useState("all");
-  const inv=sel?store.invoices.find(i=>i.id===sel):null;const invClient=inv?store.clients.find(c=>c.id===inv.clientId):null;
+  const [sel,setSel]=useState(null);
+  const [mode,setMode]=useState("view"); // view | create | edit
+  const [draft,setDraft]=useState({clientId:"",lines:[],taxRate:0,dueDate:"",notes:""});
+  const [filter,setFilter]=useState("all");
+
+  const inv=sel?store.invoices.find(i=>i.id===sel):null;
+  const invClient=inv?store.clients.find(c=>c.id===inv.clientId):null;
   const filtered=store.invoices.filter(i=>filter==="all"||i.status===filter);
-  const pSub=newInv.lines.reduce((s,l)=>s+(l.qty*l.unitPrice),0);const pTax=pSub*(parseFloat(newInv.taxRate)/100);const pTotal=pSub+pTax;
-  function ul(id,patch){setNewInv(n=>({...n,lines:n.lines.map(l=>l.id===id?{...l,...patch}:l)}));}
-  function create(){
-    if(!newInv.clientId)return showToast("Select a client",T.amber);
-    if(!newInv.lines.length)return showToast("Add at least one line",T.amber);
-    const newId=uid();
-    const obj={...newInv,id:newId,status:"Draft",subtotal:pSub,tax:pTax,total:pTotal,createdAt:now()};
-    update(s=>{s.invoices=[obj,...s.invoices];return s;});
-    log("Invoice created for "+(store.clients.find(c=>c.id===newInv.clientId)?.name||""));
-    showToast("Invoice created");setCreating(false);setNewInv({clientId:"",lines:[],taxRate:0,dueDate:"",notes:""});setSel(newId);
+
+  // Build a combined product list from ALL vendors' catalogs + inventory
+  const allProducts=[];
+  store.vendors.forEach(v=>(v.products||[]).forEach(p=>{
+    allProducts.push({id:"v_"+v.id+"_"+p.id,name:p.name,sku:p.sku||"",strength:p.strength||"",price:parseFloat(p.price||0),source:"vendor",vendorName:v.name});
+  }));
+  store.inventory.forEach(i=>{
+    allProducts.push({id:"i_"+i.id,name:i.name,sku:i.sku||"",strength:i.strength||"",price:parseFloat(i.salePrice||0),source:"inventory",qty:i.qty});
+  });
+
+  function calcTotals(lines,taxRate){
+    const sub=lines.reduce((s,l)=>s+(l.qty*(parseFloat(l.unitPrice)||0)),0);
+    const tax=sub*(parseFloat(taxRate||0)/100);
+    return{sub,tax,total:sub+tax};
   }
+
+  function ul(id,patch){setDraft(d=>({...d,lines:d.lines.map(l=>l.id===id?{...l,...patch}:l)}));}
+
+  function saveInvoice(){
+    if(!draft.clientId)return showToast("Select a client",T.amber);
+    if(!draft.lines.length)return showToast("Add at least one line item",T.amber);
+    const {sub,tax,total}=calcTotals(draft.lines,draft.taxRate);
+    if(mode==="create"){
+      const newId=uid();
+      const obj={...draft,id:newId,status:"Draft",subtotal:sub,tax,total,createdAt:now()};
+      update(s=>{s.invoices=[obj,...s.invoices];return s;});
+      log("Invoice created for "+(store.clients.find(c=>c.id===draft.clientId)?.name||""));
+      showToast("Invoice created");setSel(newId);setMode("view");setDraft({clientId:"",lines:[],taxRate:0,dueDate:"",notes:""});
+    } else {
+      update(s=>{s.invoices=s.invoices.map(i=>i.id===sel?{...i,...draft,subtotal:sub,tax,total}:i);return s;});
+      log("Invoice updated");showToast("Invoice updated");setMode("view");
+    }
+  }
+
+  function deleteInvoice(id){
+    if(!confirm("Delete this invoice?"))return;
+    update(s=>{s.invoices=s.invoices.filter(i=>i.id!==id);return s;});
+    setSel(null);setMode("view");showToast("Deleted",T.red);
+  }
+
+  const th={textAlign:"left",padding:"8px 12px",fontSize:11,color:T.textMid,fontFamily:T.mono,borderBottom:`1px solid ${T.border}`,fontWeight:600,background:T.bgCard};
+
+  // ── Line Item Editor ───────────────────────────────────────────────────────
+  function InvoiceForm(){
+    const {sub,tax,total}=calcTotals(draft.lines,draft.taxRate);
+    function addLine(){
+      setDraft(d=>({...d,lines:[...d.lines,{id:uid(),productId:"",productName:"",sku:"",strength:"",unitPrice:0,qty:1}]}));
+    }
+    return(
+      <div style={{maxWidth:760}}>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:24,paddingBottom:20,borderBottom:`1px solid ${T.border}`}}>
+          <div>
+            <div style={{fontSize:10,color:T.accent,fontFamily:T.mono,letterSpacing:2,textTransform:"uppercase",marginBottom:6,fontWeight:600}}>{mode==="create"?"New Document":"Edit Document"}</div>
+            <h2 style={{fontSize:22,fontWeight:700,color:T.text,margin:0}}>{mode==="create"?"New Invoice":"Edit Invoice"}</h2>
+          </div>
+          <Btn ghost onClick={()=>setMode("view")}>Cancel</Btn>
+        </div>
+        {/* Invoice details */}
+        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:16,marginBottom:24}}>
+          <div>
+            <Lbl>Client</Lbl>
+            <select value={draft.clientId} onChange={e=>setDraft(d=>({...d,clientId:e.target.value}))} style={IS}>
+              <option value="">Select client...</option>
+              {store.clients.map(c=><option key={c.id} value={c.id}>{c.name}</option>)}
+            </select>
+          </div>
+          <div>
+            <Lbl>Due Date</Lbl>
+            <input type="date" value={draft.dueDate} onChange={e=>setDraft(d=>({...d,dueDate:e.target.value}))} style={IS}/>
+          </div>
+          <div>
+            <Lbl>Tax Rate (%)</Lbl>
+            <input type="number" min="0" max="100" step="0.1" value={draft.taxRate} onChange={e=>setDraft(d=>({...d,taxRate:e.target.value}))} style={IS} placeholder="0"/>
+          </div>
+          <div>
+            <Lbl>Notes</Lbl>
+            <input value={draft.notes} onChange={e=>setDraft(d=>({...d,notes:e.target.value}))} style={IS} placeholder="Payment terms, special instructions..."/>
+          </div>
+        </div>
+        {/* Line Items */}
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:12}}>
+          <Lbl>Line Items ({draft.lines.length})</Lbl>
+          <Btn small onClick={addLine}>+ Add Line</Btn>
+        </div>
+        {draft.lines.length>0&&(
+          <div style={{border:`1px solid ${T.border}`,borderRadius:T.radius,overflow:"hidden",marginBottom:16}}>
+            <table style={{width:"100%",borderCollapse:"collapse"}}>
+              <thead><tr>
+                <th style={{...th,width:"38%"}}>Product</th>
+                <th style={th}>SKU</th>
+                <th style={th}>Strength</th>
+                <th style={{...th,width:70}}>Unit $</th>
+                <th style={{...th,width:60}}>Qty</th>
+                <th style={{...th,textAlign:"right"}}>Total</th>
+                <th style={{...th,width:32}}></th>
+              </tr></thead>
+              <tbody>{draft.lines.map(l=>{
+                const lineTotal=l.qty*(parseFloat(l.unitPrice)||0);
+                return(
+                  <tr key={l.id} style={{borderBottom:`1px solid ${T.border}`}}>
+                    <td style={{padding:"6px 8px"}}>
+                      {/* Smart dropdown: shows all vendor products + inventory with strength in name */}
+                      <select value={l.productId||""} onChange={e=>{
+                        if(!e.target.value){ul(l.id,{productId:"",productName:"",sku:"",strength:"",unitPrice:0});return;}
+                        const p=allProducts.find(pp=>pp.id===e.target.value);
+                        if(p)ul(l.id,{productId:p.id,productName:p.name,sku:p.sku,strength:p.strength,unitPrice:p.price});
+                      }} style={{...IS,padding:"5px 8px",fontSize:12,marginBottom:l.productId?"0":"4px"}}>
+                        <option value="">— Select product —</option>
+                        {store.vendors.filter(v=>(v.products||[]).length>0).map(v=>(
+                          <optgroup key={v.id} label={"📦 "+v.name}>
+                            {(v.products||[]).map(p=>(
+                              <option key={"v_"+v.id+"_"+p.id} value={"v_"+v.id+"_"+p.id}>
+                                {p.name}{p.strength?" · "+p.strength:""} — ${parseFloat(p.price||0).toFixed(2)}
+                              </option>
+                            ))}
+                          </optgroup>
+                        ))}
+                        {store.inventory.length>0&&(
+                          <optgroup label="🏥 Inventory">
+                            {store.inventory.map(i=>(
+                              <option key={"i_"+i.id} value={"i_"+i.id}>
+                                {i.name}{i.strength?" · "+i.strength:""} — ${parseFloat(i.salePrice||0).toFixed(2)} (Stock: {i.qty})
+                              </option>
+                            ))}
+                          </optgroup>
+                        )}
+                      </select>
+                      {!l.productId&&<input value={l.productName} onChange={e=>ul(l.id,{productName:e.target.value})} placeholder="Or type product name..." style={{...IS,padding:"5px 8px",fontSize:12}}/>}
+                    </td>
+                    <td style={{padding:"6px 8px",fontSize:11,color:T.textMid,fontFamily:T.mono}}>{l.sku||"—"}</td>
+                    <td style={{padding:"6px 8px",fontSize:11,color:T.textMid}}>{l.strength||"—"}</td>
+                    <td style={{padding:"6px 8px"}}>
+                      <input type="number" min="0" step="0.01" value={l.unitPrice} onChange={e=>ul(l.id,{unitPrice:parseFloat(e.target.value)||0})} style={{...IS,width:72,padding:"5px 6px",fontSize:12}}/>
+                    </td>
+                    <td style={{padding:"6px 8px"}}>
+                      <input type="number" min="1" value={l.qty} onChange={e=>ul(l.id,{qty:parseInt(e.target.value)||1})} style={{...IS,width:52,padding:"5px 6px",fontSize:12,textAlign:"center"}}/>
+                    </td>
+                    <td style={{padding:"6px 12px",fontSize:13,color:T.accent,fontWeight:700,textAlign:"right"}}>${lineTotal.toFixed(2)}</td>
+                    <td style={{padding:"6px 8px",textAlign:"center"}}>
+                      <button onClick={()=>setDraft(d=>({...d,lines:d.lines.filter(ll=>ll.id!==l.id)}))} style={{background:"none",border:"none",color:T.red,cursor:"pointer",fontSize:18,fontWeight:700,lineHeight:1}}>×</button>
+                    </td>
+                  </tr>
+                );
+              })}</tbody>
+            </table>
+          </div>
+        )}
+        {/* Totals */}
+        <div style={{display:"flex",justifyContent:"flex-end",marginBottom:24}}>
+          <div style={{background:T.bgCard,border:`1px solid ${T.border}`,borderRadius:T.radius,padding:"14px 20px",minWidth:240}}>
+            <div style={{display:"flex",justifyContent:"space-between",fontSize:13,marginBottom:6}}>
+              <span style={{color:T.textMid}}>Subtotal</span>
+              <span style={{color:T.text,fontWeight:600}}>${sub.toFixed(2)}</span>
+            </div>
+            {parseFloat(draft.taxRate)>0&&<div style={{display:"flex",justifyContent:"space-between",fontSize:13,marginBottom:6}}>
+              <span style={{color:T.textMid}}>Tax ({draft.taxRate}%)</span>
+              <span style={{color:T.text,fontWeight:600}}>${tax.toFixed(2)}</span>
+            </div>}
+            <div style={{display:"flex",justifyContent:"space-between",fontSize:20,fontWeight:700,borderTop:`1px solid ${T.border}`,paddingTop:10,marginTop:4}}>
+              <span style={{color:T.text}}>Total</span>
+              <span style={{color:T.accent}}>${total.toFixed(2)}</span>
+            </div>
+          </div>
+        </div>
+        <div style={{display:"flex",gap:10}}>
+          <Btn primary onClick={saveInvoice}>{mode==="create"?"Create Invoice":"Save Changes"}</Btn>
+          <Btn ghost onClick={()=>setMode("view")}>Cancel</Btn>
+        </div>
+      </div>
+    );
+  }
+
+  // ── Invoice Detail View ────────────────────────────────────────────────────
+  function InvoiceDetail(){
+    return(
+      <div style={{maxWidth:760}}>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:24,paddingBottom:20,borderBottom:`1px solid ${T.border}`}}>
+          <div>
+            <div style={{fontSize:10,color:T.accent,fontFamily:T.mono,letterSpacing:2,textTransform:"uppercase",marginBottom:6,fontWeight:600}}>Invoice</div>
+            <h2 style={{fontSize:22,fontWeight:700,color:T.text,margin:0}}>{invClient?.name||"Unknown Client"}</h2>
+            <div style={{fontSize:11,color:T.textMid,fontFamily:T.mono,marginTop:4}}>#{inv.id.slice(0,8).toUpperCase()} · {new Date(inv.createdAt).toLocaleDateString()}</div>
+          </div>
+          <div style={{display:"flex",gap:8,flexWrap:"wrap",justifyContent:"flex-end"}}>
+            <Btn small primary onClick={()=>downloadInvoicePDF(inv,invClient,store)}>⬇ Download PDF</Btn>
+            <Btn small ghost onClick={()=>{setDraft({clientId:inv.clientId,lines:inv.lines.map(l=>({...l})),taxRate:inv.taxRate||0,dueDate:inv.dueDate||"",notes:inv.notes||""});setMode("edit");}}>✎ Edit</Btn>
+            <Btn small danger onClick={()=>deleteInvoice(inv.id)}>Delete</Btn>
+          </div>
+        </div>
+        {/* Status + Due Date */}
+        <div style={{display:"flex",gap:16,alignItems:"center",marginBottom:20}}>
+          <div style={{display:"flex",gap:8,alignItems:"center"}}>
+            <Lbl>Status:</Lbl>
+            <select value={inv.status} onChange={e=>update(s=>{s.invoices=s.invoices.map(i=>i.id===inv.id?{...i,status:e.target.value}:i);return s;})} style={{...IS,width:"auto"}}>
+              {INV_STATUSES.map(s=><option key={s}>{s}</option>)}
+            </select>
+          </div>
+          <SBadge status={inv.status}/>
+          {inv.dueDate&&<div style={{fontSize:12,color:T.textMid}}>Due: <strong style={{color:T.text}}>{inv.dueDate}</strong></div>}
+        </div>
+        {/* Line Items Table */}
+        <div style={{border:`1px solid ${T.border}`,borderRadius:T.radius,overflow:"hidden",marginBottom:20}}>
+          <table style={{width:"100%",borderCollapse:"collapse"}}>
+            <thead><tr>
+              <th style={th}>Product</th>
+              <th style={th}>SKU</th>
+              <th style={th}>Strength</th>
+              <th style={{...th,textAlign:"center"}}>Qty</th>
+              <th style={{...th,textAlign:"right"}}>Unit Price</th>
+              <th style={{...th,textAlign:"right"}}>Total</th>
+            </tr></thead>
+            <tbody>{inv.lines.map((l,i)=>(
+              <tr key={l.id} style={{borderBottom:`1px solid ${T.border}`,background:i%2===0?"transparent":T.bgCard+"60"}}>
+                <td style={{padding:"10px 12px",fontSize:13,color:T.text,fontWeight:500}}>{l.productName}</td>
+                <td style={{padding:"10px 12px",fontSize:12,color:T.textMid,fontFamily:T.mono}}>{l.sku||"—"}</td>
+                <td style={{padding:"10px 12px",fontSize:12,color:T.textMid}}>{l.strength||"—"}</td>
+                <td style={{padding:"10px 12px",fontSize:13,color:T.text,fontWeight:600,textAlign:"center"}}>{l.qty}</td>
+                <td style={{padding:"10px 12px",fontSize:13,color:T.accent,textAlign:"right"}}>${parseFloat(l.unitPrice).toFixed(2)}</td>
+                <td style={{padding:"10px 12px",fontSize:13,color:T.accent,fontWeight:700,textAlign:"right"}}>${(l.qty*parseFloat(l.unitPrice)).toFixed(2)}</td>
+              </tr>
+            ))}</tbody>
+          </table>
+        </div>
+        {/* Totals */}
+        <div style={{display:"flex",justifyContent:"flex-end",marginBottom:inv.notes?16:0}}>
+          <div style={{background:T.bgCard,border:`1px solid ${T.border}`,borderRadius:T.radius,padding:"14px 20px",minWidth:260}}>
+            <div style={{display:"flex",justifyContent:"space-between",fontSize:13,padding:"6px 0",borderBottom:`1px solid ${T.border}`}}>
+              <span style={{color:T.textMid}}>Subtotal</span>
+              <span style={{color:T.text,fontWeight:600}}>${inv.subtotal.toFixed(2)}</span>
+            </div>
+            {inv.tax>0&&<div style={{display:"flex",justifyContent:"space-between",fontSize:13,padding:"6px 0",borderBottom:`1px solid ${T.border}`}}>
+              <span style={{color:T.textMid}}>Tax ({inv.taxRate}%)</span>
+              <span style={{color:T.text,fontWeight:600}}>${inv.tax.toFixed(2)}</span>
+            </div>}
+            <div style={{display:"flex",justifyContent:"space-between",fontSize:22,fontWeight:700,paddingTop:10}}>
+              <span style={{color:T.text}}>Total Due</span>
+              <span style={{color:T.accent}}>${inv.total.toFixed(2)}</span>
+            </div>
+          </div>
+        </div>
+        {inv.notes&&<div style={{background:T.bgCard,border:`1px solid ${T.border}`,borderRadius:T.radius,padding:16,marginTop:16}}>
+          <div style={{fontSize:11,color:T.textMid,fontFamily:T.mono,letterSpacing:1.5,fontWeight:700,marginBottom:6,textTransform:"uppercase"}}>Notes</div>
+          <div style={{fontSize:13,color:T.text,lineHeight:1.7,whiteSpace:"pre-wrap"}}>{inv.notes}</div>
+        </div>}
+      </div>
+    );
+  }
+
+  const isEditing=mode==="create"||mode==="edit";
+
   return(
     <div style={{display:"flex",height:"100%",overflow:"hidden"}}>
-      <div style={{width:280,borderRight:`1px solid ${T.border}`,overflow:"auto",padding:20}}>
-        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16}}><h3 style={{margin:0,fontSize:16,color:T.accent,fontWeight:700}}>Invoices</h3><Btn small onClick={()=>{setCreating(true);setSel(null);}}>+ New</Btn></div>
-        <select value={filter} onChange={e=>setFilter(e.target.value)} style={{...IS,marginBottom:12}}><option value="all">All Statuses</option>{INV_STATUSES.map(s=><option key={s}>{s}</option>)}</select>
-        {filtered.map(i=>{const c=store.clients.find(cc=>cc.id===i.clientId);return(
-          <div key={i.id} onClick={()=>{setSel(i.id);setCreating(false);}} style={{padding:"10px 12px",borderRadius:6,cursor:"pointer",background:sel===i.id?T.bgPanel:"transparent",border:sel===i.id?`1px solid ${T.borderHi}`:"1px solid transparent",marginTop:6}}>
-            <div style={{display:"flex",justifyContent:"space-between"}}><span style={{fontSize:13,color:T.text,fontWeight:600}}>{c?.name||"Unknown"}</span><span style={{color:T.accent,fontSize:13,fontWeight:700}}>${i.total.toFixed(2)}</span></div>
-            <div style={{display:"flex",justifyContent:"space-between",marginTop:3}}><span style={{fontSize:11,color:T.textMid,fontFamily:T.mono,fontWeight:500}}>{new Date(i.createdAt).toLocaleDateString()}</span><SBadge status={i.status}/></div>
+      {/* Sidebar */}
+      <div style={{width:280,borderRight:`1px solid ${T.border}`,overflow:"auto",padding:20,flexShrink:0}}>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16}}>
+          <div>
+            <div style={{fontSize:10,color:T.textDim,fontFamily:T.mono,letterSpacing:1.5,textTransform:"uppercase",fontWeight:600,marginBottom:2}}>Billing</div>
+            <h3 style={{margin:0,fontSize:15,color:T.text,fontWeight:600}}>Invoices</h3>
           </div>
-        );})}
-        {!filtered.length&&<div style={{color:T.textMid,fontSize:12,marginTop:16,fontWeight:500}}>No invoices</div>}
+          <Btn small onClick={()=>{setMode("create");setSel(null);setDraft({clientId:"",lines:[],taxRate:0,dueDate:"",notes:""});}}>+ New</Btn>
+        </div>
+        <select value={filter} onChange={e=>setFilter(e.target.value)} style={{...IS,marginBottom:12}}>
+          <option value="all">All Statuses</option>
+          {INV_STATUSES.map(s=><option key={s}>{s}</option>)}
+        </select>
+        {filtered.map(i=>{
+          const c=store.clients.find(cc=>cc.id===i.clientId);
+          return(
+            <div key={i.id} style={{marginTop:6}}>
+              <div onClick={()=>{setSel(i.id);setMode("view");}}
+                style={{padding:"10px 12px",borderRadius:T.radius,cursor:"pointer",background:sel===i.id&&mode==="view"?T.bgPanel:"transparent",border:sel===i.id&&mode==="view"?`1px solid ${T.borderHi}`:"1px solid transparent"}}>
+                <div style={{display:"flex",justifyContent:"space-between"}}>
+                  <span style={{fontSize:13,color:T.text,fontWeight:600,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap",maxWidth:130}}>{c?.name||"Unknown"}</span>
+                  <span style={{color:T.accent,fontSize:13,fontWeight:700}}>${i.total.toFixed(2)}</span>
+                </div>
+                <div style={{display:"flex",justifyContent:"space-between",marginTop:3}}>
+                  <span style={{fontSize:11,color:T.textMid,fontFamily:T.mono}}>{new Date(i.createdAt).toLocaleDateString()}</span>
+                  <SBadge status={i.status}/>
+                </div>
+                <div style={{display:"flex",gap:4,marginTop:6}}>
+                  <button onClick={e=>{e.stopPropagation();setSel(i.id);setMode("view");}} style={{fontSize:10,padding:"2px 8px",borderRadius:4,border:`1px solid ${T.border}`,background:"transparent",color:T.textMid,cursor:"pointer",fontFamily:T.font}}>View</button>
+                  <button onClick={e=>{e.stopPropagation();const inv=store.invoices.find(ii=>ii.id===i.id);if(inv){setDraft({clientId:inv.clientId,lines:inv.lines.map(l=>({...l})),taxRate:inv.taxRate||0,dueDate:inv.dueDate||"",notes:inv.notes||""});setSel(i.id);setMode("edit");}}} style={{fontSize:10,padding:"2px 8px",borderRadius:4,border:`1px solid ${T.border}`,background:"transparent",color:T.textMid,cursor:"pointer",fontFamily:T.font}}>Edit</button>
+                  <button onClick={e=>{e.stopPropagation();if(!confirm("Delete this invoice?"))return;update(s=>{s.invoices=s.invoices.filter(ii=>ii.id!==i.id);return s;});if(sel===i.id){setSel(null);setMode("view");}}} style={{fontSize:10,padding:"2px 8px",borderRadius:4,border:`1px solid ${T.red}44`,background:"transparent",color:T.red,cursor:"pointer",fontFamily:T.font}}>Delete</button>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+        {!filtered.length&&<div style={{color:T.textMid,fontSize:12,marginTop:16,textAlign:"center"}}>No invoices yet</div>}
       </div>
+      {/* Main */}
       <div style={{flex:1,overflow:"auto",padding:"32px 36px"}}>
-        {creating&&<div style={{maxWidth:720}}>
-          <h3 style={{fontSize:22,fontWeight:700,color:T.text,marginBottom:24}}>New Invoice</h3>
-          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:16,marginBottom:24}}>
-            <div><Lbl>Client</Lbl><select value={newInv.clientId} onChange={e=>setNewInv({...newInv,clientId:e.target.value})} style={IS}><option value="">Select client...</option>{store.clients.map(c=><option key={c.id} value={c.id}>{c.name}</option>)}</select></div>
-            <div><Lbl>Due Date</Lbl><input type="date" value={newInv.dueDate} onChange={e=>setNewInv({...newInv,dueDate:e.target.value})} style={IS}/></div>
-            <div><Lbl>Tax Rate (%)</Lbl><input type="number" value={newInv.taxRate} onChange={e=>setNewInv({...newInv,taxRate:e.target.value})} style={IS}/></div>
-            <div><Lbl>Notes</Lbl><input value={newInv.notes} onChange={e=>setNewInv({...newInv,notes:e.target.value})} style={IS}/></div>
-          </div>
-          <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:12}}><Lbl>Line Items</Lbl><Btn small onClick={()=>setNewInv(n=>({...n,lines:[...n.lines,{id:uid(),inventoryId:"",productName:"",sku:"",unitPrice:0,qty:1}]}))}>+ Add Line</Btn></div>
-          {newInv.lines.length>0&&<table style={{width:"100%",borderCollapse:"collapse",marginBottom:16}}>
-            <thead><tr>{["Product","SKU","Unit Price","Qty","Total",""].map(h=><th key={h} style={{textAlign:"left",padding:"6px 8px",fontSize:11,color:T.textMid,fontFamily:T.mono,borderBottom:`1px solid ${T.border}`,fontWeight:700}}>{h}</th>)}</tr></thead>
-            <tbody>{newInv.lines.map(l=><tr key={l.id}>
-              <td style={{padding:"6px 8px"}}>
-                <select value={l.inventoryId} onChange={e=>{const it=store.inventory.find(i=>i.id===e.target.value);if(it)ul(l.id,{inventoryId:it.id,productName:it.name,sku:it.sku,unitPrice:parseFloat(it.salePrice||0)});else ul(l.id,{inventoryId:"",productName:"",sku:"",unitPrice:0});}} style={{...IS,padding:"4px 8px",fontSize:12,marginBottom:4}}><option value="">Select from inventory...</option>{store.inventory.map(i=><option key={i.id} value={i.id}>{i.name} (Qty: {i.qty})</option>)}</select>
-                {!l.inventoryId&&<input value={l.productName} onChange={e=>ul(l.id,{productName:e.target.value})} placeholder="Or type manually" style={{...IS,padding:"4px 8px",fontSize:12}}/>}
-              </td>
-              <td style={{padding:"6px 8px",fontSize:12,color:T.textMid,fontFamily:T.mono,fontWeight:500}}>{l.sku}</td>
-              <td style={{padding:"6px 8px"}}><input type="number" value={l.unitPrice} onChange={e=>ul(l.id,{unitPrice:parseFloat(e.target.value)||0})} style={{...IS,width:80,padding:"4px 8px"}}/></td>
-              <td style={{padding:"6px 8px"}}><input type="number" min="1" value={l.qty} onChange={e=>ul(l.id,{qty:parseInt(e.target.value)||1})} style={{...IS,width:60,padding:"4px 8px"}}/></td>
-              <td style={{padding:"6px 8px",color:T.accent,fontWeight:700}}>${(l.qty*l.unitPrice).toFixed(2)}</td>
-              <td><button onClick={()=>setNewInv(n=>({...n,lines:n.lines.filter(ll=>ll.id!==l.id)}))} style={{background:"none",border:"none",color:T.textMid,cursor:"pointer"}}>✕</button></td>
-            </tr>)}</tbody>
-          </table>}
-          <div style={{textAlign:"right",marginBottom:24}}>
-            <div style={{fontSize:13,color:T.textMid,fontWeight:600}}>Subtotal: ${pSub.toFixed(2)}</div>
-            {parseFloat(newInv.taxRate)>0&&<div style={{fontSize:13,color:T.textMid,fontWeight:600}}>Tax ({newInv.taxRate}%): ${pTax.toFixed(2)}</div>}
-            <div style={{fontSize:22,color:T.accent,fontWeight:700}}>Total: ${pTotal.toFixed(2)}</div>
-          </div>
-          <div style={{display:"flex",gap:10}}><Btn onClick={create}>Create Invoice</Btn><Btn ghost onClick={()=>setCreating(false)}>Cancel</Btn></div>
-        </div>}
-        {inv&&!creating&&<div style={{maxWidth:720}}>
-          <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:24}}>
-            <div><h2 style={{fontSize:22,fontWeight:700,color:T.text,margin:0}}>Invoice — {invClient?.name}</h2><div style={{fontSize:11,color:T.textMid,fontFamily:T.mono,marginTop:4,fontWeight:500}}>#{inv.id.slice(0,8).toUpperCase()} · {new Date(inv.createdAt).toLocaleDateString()}</div></div>
-          </div>
-          <div style={{marginBottom:16}}><Lbl>Status</Lbl><select value={inv.status} onChange={e=>update(s=>{s.invoices=s.invoices.map(i=>i.id===inv.id?{...i,status:e.target.value}:i);return s;})} style={{...IS,width:"auto",color:T.accent}}>{INV_STATUSES.map(s=><option key={s}>{s}</option>)}</select></div>
-          <table style={{width:"100%",borderCollapse:"collapse",marginBottom:20}}>
-            <thead><tr>{["Product","SKU","Qty","Unit Price","Total"].map(h=><th key={h} style={{textAlign:"left",padding:"6px 8px",fontSize:11,color:T.textMid,fontFamily:T.mono,borderBottom:`1px solid ${T.border}`,fontWeight:700}}>{h}</th>)}</tr></thead>
-            <tbody>{inv.lines.map(l=><tr key={l.id}><td style={{padding:"8px",fontSize:13,color:T.text,fontWeight:500}}>{l.productName}</td><td style={{padding:"8px",fontSize:12,color:T.textMid,fontFamily:T.mono,fontWeight:500}}>{l.sku}</td><td style={{padding:"8px",fontSize:13,color:T.text,fontWeight:500}}>{l.qty}</td><td style={{padding:"8px",fontSize:13,color:T.accent,fontWeight:700}}>${l.unitPrice.toFixed(2)}</td><td style={{padding:"8px",fontSize:13,color:T.accent,fontWeight:700}}>${(l.qty*l.unitPrice).toFixed(2)}</td></tr>)}</tbody>
-          </table>
-          <div style={{textAlign:"right"}}><div style={{fontSize:13,color:T.textMid,fontWeight:600}}>Subtotal: ${inv.subtotal.toFixed(2)}</div>{inv.tax>0&&<div style={{fontSize:13,color:T.textMid,fontWeight:600}}>Tax ({inv.taxRate}%): ${inv.tax.toFixed(2)}</div>}<div style={{fontSize:24,color:T.accent,fontWeight:700}}>Total: ${inv.total.toFixed(2)}</div></div>
-        </div>}
-        {!inv&&!creating&&<div style={{color:T.textMid,marginTop:80,textAlign:"center",fontSize:14,fontWeight:500}}>Select an invoice or create one</div>}
+        {isEditing&&<InvoiceForm/>}
+        {inv&&mode==="view"&&<InvoiceDetail/>}
+        {!inv&&mode==="view"&&<div style={{color:T.textMid,marginTop:80,textAlign:"center",fontSize:14}}>Select an invoice or create a new one</div>}
       </div>
     </div>
   );
 }
 
-function ActivityLog({store}){
+function ActivityLog({store,update}){
+  function clearLog(){
+    if(!confirm("Clear all activity logs?"))return;
+    update(s=>{s.activityLog=[];return s;});
+  }
   return(
     <div style={{padding:"32px 36px"}}>
-      <div style={{fontSize:11,color:T.accent,fontFamily:T.mono,letterSpacing:3,textTransform:"uppercase",marginBottom:6,fontWeight:700}}>System</div>
-      <h1 style={{fontSize:24,fontWeight:700,color:T.text,marginBottom:28}}>Activity Log</h1>
+      <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-end",marginBottom:28,paddingBottom:20,borderBottom:`1px solid ${T.border}`}}>
+        <div>
+          <div style={{fontSize:11,color:T.accent,fontFamily:T.mono,letterSpacing:3,textTransform:"uppercase",marginBottom:6,fontWeight:700}}>System</div>
+          <h1 style={{fontSize:24,fontWeight:700,color:T.text}}>Activity Log</h1>
+        </div>
+        <Btn ghost danger onClick={clearLog}>Clear All</Btn>
+      </div>
       <div style={{maxWidth:760}}>
         {store.activityLog.map(e=>(
           <div key={e.id} style={{display:"flex",gap:20,padding:"10px 16px",borderBottom:`1px solid ${T.border}`,alignItems:"flex-start"}}>
@@ -1057,15 +1794,21 @@ export default function App(){
   const alertCount=lowStock.length+outOfStock.length;
 
   if(!loaded)return(
-    <div style={{display:"flex",height:"100vh",background:"#060c18",alignItems:"center",justifyContent:"center",flexDirection:"column",gap:16}}>
-      <div style={{width:32,height:32,border:"3px solid rgba(0,200,255,0.2)",borderTopColor:"#00c8ff",borderRadius:"50%",animation:"spin 0.8s linear infinite"}}/>
-      <div style={{color:"#9dbcd8",fontFamily:"system-ui",fontSize:14}}>Loading your data...</div>
+    <div style={{display:"flex",height:"100vh",background:"#0a0f1a",alignItems:"center",justifyContent:"center",flexDirection:"column",gap:20}}>
+      <div style={{position:"relative",width:52,height:52}}>
+        <div style={{position:"absolute",inset:0,border:"2px solid rgba(99,179,237,0.15)",borderRadius:"50%"}}/>
+        <div style={{position:"absolute",inset:0,border:"2px solid transparent",borderTopColor:"#63b3ed",borderRadius:"50%",animation:"spin 0.9s linear infinite"}}/>
+        <div style={{position:"absolute",inset:"12px",display:"flex",alignItems:"center",justifyContent:"center"}}>
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 1L8 15M1 8L15 8" stroke="#63b3ed" strokeWidth="2" strokeLinecap="round"/><circle cx="8" cy="8" r="2.5" fill="#63b3ed"/></svg>
+        </div>
+      </div>
+      <div style={{color:"#90afd4",fontFamily:"'Inter',system-ui",fontSize:13,letterSpacing:0.5}}>Loading InvTrack...</div>
       <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
     </div>
   );
 
   const GS=`
-    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Roboto:wght@400;500;700&family=Roboto+Mono:wght@400;500&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&family=Roboto:wght@400;500;700&family=Roboto+Mono:wght@400;500&display=swap');
     *{box-sizing:border-box;margin:0;padding:0;}
     ::-webkit-scrollbar{width:4px;height:4px;}
     ::-webkit-scrollbar-track{background:transparent;}
@@ -1080,37 +1823,55 @@ export default function App(){
   return(
     <div style={{display:"flex",height:"100vh",background:T.bg,color:T.text,fontFamily:T.font,overflow:"hidden",position:"relative"}}>
       <style>{GS}</style>
-      <div style={{position:"fixed",inset:0,pointerEvents:"none",zIndex:0,backgroundImage:`linear-gradient(${gridColor} 1px,transparent 1px),linear-gradient(90deg,${gridColor} 1px,transparent 1px)`,backgroundSize:"48px 48px"}}/>
+      <div style={{position:"fixed",inset:0,pointerEvents:"none",zIndex:0,backgroundImage:`linear-gradient(${gridColor} 1px,transparent 1px),linear-gradient(90deg,${gridColor} 1px,transparent 1px)`,backgroundSize:"32px 32px"}}/>
+      {themeMode==="dark"&&<>
+        <div style={{position:"fixed",top:-200,right:-100,width:500,height:500,borderRadius:"50%",background:`radial-gradient(circle,${T.accentDim} 0%,transparent 65%)`,pointerEvents:"none",zIndex:0}}/>
+        <div style={{position:"fixed",bottom:-150,left:100,width:400,height:400,borderRadius:"50%",background:"radial-gradient(circle,rgba(79,209,199,0.04) 0%,transparent 65%)",pointerEvents:"none",zIndex:0}}/>
+      </>}
 
-      <nav style={{width:220,background:T.bgPanel,borderRight:`1px solid ${T.border}`,display:"flex",flexDirection:"column",flexShrink:0,zIndex:10,position:"relative",boxShadow:themeMode==="light"?"2px 0 12px rgba(0,0,0,0.06)":"none"}}>
-        <div style={{padding:"28px 24px 24px",borderBottom:`1px solid ${T.border}`}}>
-          <div style={{display:"flex",alignItems:"center",gap:10}}>
-            <div style={{width:32,height:32,borderRadius:8,background:`linear-gradient(135deg,${T.accent},${T.green})`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:14,fontWeight:700,color:"#fff",flexShrink:0}}>IT</div>
+      <nav style={{width:240,background:T.bgPanel,borderRight:`1px solid ${T.border}`,display:"flex",flexDirection:"column",flexShrink:0,zIndex:10,position:"relative",boxShadow:themeMode==="light"?`2px 0 20px ${T.shadow}`:`2px 0 20px ${T.shadow}`}}>
+        {/* Logo */}
+        <div style={{padding:"24px 20px 20px",borderBottom:`1px solid ${T.border}`}}>
+          <div style={{display:"flex",alignItems:"center",gap:12}}>
+            <div style={{width:38,height:38,borderRadius:10,background:`linear-gradient(135deg,${T.accent},${T.teal||T.green})`,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,boxShadow:`0 4px 12px ${T.accentGlow}`}}>
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <path d="M10 2L10 18M2 10L18 10" stroke="white" strokeWidth="2.5" strokeLinecap="round"/>
+                <circle cx="10" cy="10" r="3" fill="white"/>
+              </svg>
+            </div>
             <div>
-              <div style={{fontSize:15,fontWeight:700,letterSpacing:1.5,color:T.text,textTransform:"uppercase",fontFamily:T.font}}>InvTrack</div>
-              <div style={{fontSize:9,color:T.textMid,letterSpacing:2,fontFamily:T.mono,textTransform:"uppercase",fontWeight:600}}>Pro System</div>
+              <div style={{fontSize:16,fontWeight:700,color:T.text,letterSpacing:0.5,fontFamily:T.font}}>InvTrack</div>
+              <div style={{fontSize:10,color:T.textMid,fontFamily:T.mono,fontWeight:500,letterSpacing:1}}>MEDICAL PRO</div>
             </div>
           </div>
         </div>
-        <div style={{flex:1,padding:"16px 12px",display:"flex",flexDirection:"column",gap:2,overflowY:"auto"}}>
-          {NAV.map(t=>{
-            const active=tab===t.id;const isAdmin=t.id==="admin";
+        {/* Nav items */}
+        <div style={{flex:1,padding:"12px 10px",display:"flex",flexDirection:"column",gap:1,overflowY:"auto"}}>
+          <div style={{fontSize:9,color:T.textDim,fontFamily:T.mono,fontWeight:700,letterSpacing:2,padding:"8px 10px 4px",textTransform:"uppercase"}}>Main Menu</div>
+          {NAV.filter(t=>t.id!=="admin").map(t=>{
+            const active=tab===t.id;
             return(
-              <button key={t.id} onClick={()=>setTab(t.id)} style={{display:"flex",alignItems:"center",gap:10,width:"100%",padding:"10px 12px",borderRadius:T.radius,background:active?T.accentDim:"transparent",border:active?`1px solid ${T.borderHi}`:"1px solid transparent",color:active?T.accent:T.textMid,cursor:"pointer",fontSize:13,fontWeight:active?700:500,textAlign:"left",fontFamily:T.font,position:"relative",overflow:"hidden",marginTop:isAdmin?8:0}}>
-                {active&&<div style={{position:"absolute",left:0,top:"20%",bottom:"20%",width:2,borderRadius:2,background:T.accent,boxShadow:`0 0 8px ${T.accentGlow}`}}/>}
-                <span style={{fontSize:15,opacity:active?1:0.75}}>{t.icon}</span>
+              <button key={t.id} onClick={()=>setTab(t.id)} style={{display:"flex",alignItems:"center",gap:10,width:"100%",padding:"9px 12px",borderRadius:T.radius,background:active?T.accentDim:"transparent",border:"none",color:active?T.accent:T.textMid,cursor:"pointer",fontSize:13,fontWeight:active?600:400,textAlign:"left",fontFamily:T.font,position:"relative",transition:"all 0.15s"}}>
+                {active&&<div style={{position:"absolute",left:0,top:"15%",bottom:"15%",width:3,borderRadius:3,background:T.accent}}/>}
+                <span style={{fontSize:14,opacity:active?1:0.6,width:18,textAlign:"center"}}>{t.icon}</span>
                 <span>{t.label}</span>
-                {t.id==="inventory"&&alertCount>0&&<span style={{marginLeft:"auto",background:T.red,color:"white",borderRadius:20,fontSize:9,fontWeight:700,padding:"2px 7px",fontFamily:T.mono}}>{alertCount}</span>}
+                {t.id==="inventory"&&alertCount>0&&<span style={{marginLeft:"auto",background:T.red,color:"white",borderRadius:T.radiusFull||20,fontSize:10,fontWeight:700,padding:"1px 7px",fontFamily:T.mono}}>{alertCount}</span>}
               </button>
             );
           })}
+          <div style={{height:1,background:T.border,margin:"8px 10px"}}/>
+          <button onClick={()=>setTab("admin")} style={{display:"flex",alignItems:"center",gap:10,width:"100%",padding:"9px 12px",borderRadius:T.radius,background:tab==="admin"?T.accentDim:"transparent",border:"none",color:tab==="admin"?T.accent:T.textDim,cursor:"pointer",fontSize:13,fontWeight:tab==="admin"?600:400,textAlign:"left",fontFamily:T.font}}>
+            <span style={{fontSize:14,opacity:0.7,width:18,textAlign:"center"}}>⚙</span>
+            <span>Settings</span>
+          </button>
         </div>
-        <div style={{padding:"16px 20px",borderTop:`1px solid ${T.border}`}}>
-          <div style={{fontSize:10,color:T.textMid,fontFamily:T.mono,fontWeight:600}}>v2.0 · {new Date().toLocaleDateString()}</div>
-          <div style={{display:"flex",alignItems:"center",gap:6,marginTop:6}}>
-            <div style={{width:6,height:6,borderRadius:"50%",background:T.green,boxShadow:`0 0 6px ${T.green}`,animation:"pulse-glow 2s ease-in-out infinite"}}/>
-            <span style={{fontSize:10,color:T.textMid,fontFamily:T.mono,fontWeight:600}}>SYSTEM ONLINE</span>
+        {/* Status bar */}
+        <div style={{padding:"12px 20px 16px",borderTop:`1px solid ${T.border}`}}>
+          <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:6}}>
+            <div style={{width:7,height:7,borderRadius:"50%",background:T.green,boxShadow:`0 0 8px ${T.green}`,animation:"pulse-glow 2s ease-in-out infinite",flexShrink:0}}/>
+            <span style={{fontSize:11,color:T.green,fontFamily:T.mono,fontWeight:600,letterSpacing:0.5}}>SYSTEM ONLINE</span>
           </div>
+          <div style={{fontSize:10,color:T.textDim,fontFamily:T.mono}}>{new Date().toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric"})}</div>
         </div>
       </nav>
 
@@ -1121,12 +1882,12 @@ export default function App(){
         {tab==="inventory"&&<Inventory store={store} update={update} log={log} showToast={showToast} lowStock={lowStock} outOfStock={outOfStock}/>}
         {tab==="clients"&&<Clients store={store} update={update} log={log} showToast={showToast}/>}
         {tab==="invoices"&&<Invoices store={store} update={update} log={log} showToast={showToast}/>}
-        {tab==="log"&&<ActivityLog store={store}/>}
+        {tab==="log"&&<ActivityLog store={store} update={update}/>}
         {tab==="admin"&&<AdminPanel themeMode={themeMode} setThemeMode={setThemeModeAndSave} fontChoice={fontChoice} setFontChoice={setFontChoiceAndSave}/>}
       </main>
 
-      {toast&&<div style={{position:"fixed",bottom:28,right:28,zIndex:9999,background:T.bgCard,border:`1px solid ${toast.color}50`,color:toast.color,padding:"12px 20px",borderRadius:T.radius,fontSize:13,fontFamily:T.font,fontWeight:600,boxShadow:`0 4px 32px rgba(0,0,0,0.3)`,animation:"slide-in 0.25s ease",display:"flex",alignItems:"center",gap:10,maxWidth:340}}>
-        <div style={{width:6,height:6,borderRadius:"50%",background:toast.color,flexShrink:0,boxShadow:`0 0 8px ${toast.color}`}}/>
+      {toast&&<div style={{position:"fixed",bottom:28,right:28,zIndex:9999,background:T.bgPanel,border:`1px solid ${T.border}`,borderLeft:`3px solid ${toast.color}`,color:T.text,padding:"12px 18px",borderRadius:T.radius,fontSize:13,fontFamily:T.font,fontWeight:500,boxShadow:`0 8px 24px ${T.shadow}`,animation:"slide-in 0.2s ease",display:"flex",alignItems:"center",gap:10,maxWidth:360}}>
+        <div style={{width:8,height:8,borderRadius:"50%",background:toast.color,flexShrink:0}}/>
         {toast.msg}
       </div>}
     </div>
