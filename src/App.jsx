@@ -784,7 +784,7 @@ function downloadRFPpdf(rfp, vendor, companyNotes) {
   <div style="background:#ebf4ff;border-bottom:2px solid #bee3f8;padding:10px 36px;display:flex;gap:32px;">
     <div><span style="font-size:10px;color:#2c5282;letter-spacing:1px;font-weight:700;">STATUS</span><span style="margin-left:8px;background:#2b6cb0;color:white;border-radius:12px;padding:2px 10px;font-size:11px;font-weight:600;">${rfp.status}</span></div>
     <div><span style="font-size:10px;color:#2c5282;letter-spacing:1px;font-weight:700;">ITEMS</span><span style="margin-left:8px;font-size:12px;color:#2d3748;font-weight:600;">${rfp.lines.length} line items</span></div>
-    <div><span style="font-size:10px;color:#2c5282;letter-spacing:1px;font-weight:700;">OUR ESTIMATE</span><span style="margin-left:8px;font-size:12px;color:#2d3748;font-weight:600;">$${rfp.subtotal?.toFixed(2)||"0.00"}</span></div>
+    <div><span style="font-size:10px;color:#2c5282;letter-spacing:1px;font-weight:700;">ITEMS</span><span style="margin-left:8px;font-size:12px;color:#2d3748;font-weight:600;">${rfp.lines.length} line items</span></div>
   </div>
   <!-- Vendor & Billing Info -->
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:0;border-bottom:1px solid #e2e8f0;">
@@ -836,9 +836,14 @@ function downloadRFPpdf(rfp, vendor, companyNotes) {
     </div>
     <div>
       <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:20px;margin-bottom:16px;">
-        <div style="font-size:11px;color:#718096;letter-spacing:2px;font-weight:700;margin-bottom:12px;">OUR ESTIMATE SUMMARY</div>
-        <div style="display:flex;justify-content:space-between;padding:6px 0;font-size:13px;border-bottom:1px solid #e2e8f0;"><span style="color:#4a5568;">Subtotal</span><span style="color:#1a202c;font-weight:600;">$${rfp.subtotal?.toFixed(2)||"0.00"}</span></div>
-        <div style="display:flex;justify-content:space-between;padding:10px 0;font-size:16px;font-weight:700;"><span style="color:#1a202c;">Estimated Total</span><span style="color:#2b6cb0;">$${rfp.subtotal?.toFixed(2)||"0.00"}</span></div>
+        <div style="font-size:11px;color:#718096;letter-spacing:2px;font-weight:700;margin-bottom:12px;">QUOTING INSTRUCTIONS</div>
+        <div style="font-size:13px;color:#4a5568;line-height:2;">
+          <div>✓ Provide unit pricing for all items</div>
+          <div>✓ List any volume discounts available</div>
+          <div>✓ Include shipping &amp; handling separately</div>
+          <div>✓ Quote valid for 30 days from issue date</div>
+          <div>✓ Sign and return by email or post</div>
+        </div>
       </div>
       ${companyNotes?`<div style="background:#fffbeb;border:1px solid #f6e05e;border-radius:8px;padding:16px;"><div style="font-size:11px;color:#744210;letter-spacing:2px;font-weight:700;margin-bottom:8px;">NOTES</div><div style="font-size:13px;color:#744210;line-height:1.6;">${companyNotes}</div></div>`:""}
     </div>
