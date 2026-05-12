@@ -273,11 +273,24 @@ function PricingSection({vendor,update,showToast,log}){
           const skuCol=findCol(["sku","code","abbreviation","abbr","catalog","id"]);
           const priceCol=findCol(["price_usd","price","cost","rate","unit_price","price_per"]);
           const strengthCol=findCol(["specification","spec","strength","size","dosage","package"]);
+          // Clean strength: "10mg*10vials" → "10mg", strip package/vial info
+          const cleanStrength=(s)=>{
+            if(!s)return"";
+            const str=String(s).trim();
+            // Split on * or x and take only the dosage part (first part)
+            const parts=str.split(/[*xX]/);
+            if(parts.length>1){
+              // First part is dosage (e.g. "10mg"), ignore vials/package part
+              return parts[0].trim();
+            }
+            // Also strip trailing vial/pack info like "10vials", "5ml vials"
+            return str.replace(/\s*\*?\s*\d+\s*vials?/i,"").replace(/\s*\*?\s*\d+\s*amps?/i,"").trim();
+          };
           const products=rows.map(r=>({
             name:String(r[nameCol]||"").trim(),
             sku:String(r[skuCol]||"").trim(),
             price:parseFloat(String(r[priceCol]||"0").replace(/[^0-9.]/g,""))||0,
-            strength:String(r[strengthCol]||"").trim()
+            strength:cleanStrength(r[strengthCol])
           })).filter(p=>p.name&&p.name!=="undefined");
           resolve(products);
         }catch(e){console.error("Excel parse error:",e);resolve([]);}
@@ -303,11 +316,13 @@ function PricingSection({vendor,update,showToast,log}){
           const strengthIdx=findIdx(["spec","strength","size","dosage","package"]);
           const products=lines.slice(1).map(line=>{
             const cols=line.split(",").map(c=>c.replace(/"/g,"").trim());
+            const rawStr=strengthIdx>=0?cols[strengthIdx]||"":"";
+            const cleanedStr=rawStr.split(/[*xX]/)[0].trim().replace(/\s*\d+\s*vials?/i,"").trim();
             return{
               name:nameIdx>=0?cols[nameIdx]||"":"",
               sku:skuIdx>=0?cols[skuIdx]||"":"",
               price:priceIdx>=0?parseFloat(cols[priceIdx])||0:0,
-              strength:strengthIdx>=0?cols[strengthIdx]||"":""
+              strength:cleanedStr
             };
           }).filter(p=>p.name);
           resolve(products);
