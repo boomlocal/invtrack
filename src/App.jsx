@@ -915,7 +915,8 @@ function RFPs({store,update,log,showToast}){
       if(!vendor)return showToast("Select a vendor first",T.amber);
       if(!vp.length)return showToast("Add products to this vendor first",T.amber);
       const p=vp[0];
-      setDraft(d=>({...d,lines:[...d.lines,{id:uid(),productId:p.id,productName:p.name,sku:p.sku,strength:p.strength,unitPrice:parseFloat(p.price||0),qty:1}]}));
+      const fullName=p.name+(p.strength&&!p.name.includes(p.strength)?" "+p.strength:"");
+      setDraft(d=>({...d,lines:[...d.lines,{id:uid(),productId:p.id,productName:fullName,sku:p.sku,strength:p.strength,unitPrice:parseFloat(p.price||0),qty:1}]}));
     }
     const th={textAlign:"left",padding:"7px 10px",fontSize:11,color:T.textMid,fontFamily:T.mono,borderBottom:`1px solid ${T.border}`,fontWeight:600,background:T.bgCard};
     return(
@@ -943,8 +944,18 @@ function RFPs({store,update,log,showToast}){
                 <tbody>{draft.lines.map(l=>(
                   <tr key={l.id} style={{borderBottom:`1px solid ${T.border}`}}>
                     <td style={{padding:"6px 8px"}}>
-                      <select value={l.productId||""} onChange={e=>{const p=vp.find(pp=>pp.id===e.target.value);if(p)ul(l.id,{productId:p.id,productName:p.name,sku:p.sku,strength:p.strength,unitPrice:parseFloat(p.price||0)});}} style={{...IS,padding:"4px 8px",fontSize:12}}>
-                        {vp.map(p=><option key={p.id} value={p.id}>{p.name}</option>)}
+                      <select value={l.productId||""} onChange={e=>{
+                          const p=vp.find(pp=>pp.id===e.target.value);
+                          if(p){
+                            const fn=p.name+(p.strength&&!p.name.includes(p.strength)?" "+p.strength:"");
+                            ul(l.id,{productId:p.id,productName:fn,sku:p.sku,strength:p.strength,unitPrice:parseFloat(p.price||0)});
+                          }
+                        }} style={{...IS,padding:"4px 8px",fontSize:12}}>
+                        <option value="">— Select product —</option>
+                        {vp.map(p=>{
+                          const displayName=p.name+(p.strength&&!p.name.includes(p.strength)?" "+p.strength:"");
+                          return <option key={p.id} value={p.id}>{displayName} — ${parseFloat(p.price||0).toFixed(2)}</option>;
+                        })}
                       </select>
                     </td>
                     <td style={{padding:"6px 8px",fontSize:12,color:T.textMid,fontFamily:T.mono}}>{l.sku}</td>
