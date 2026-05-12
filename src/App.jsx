@@ -3,7 +3,9 @@ import { useState, useCallback, useEffect } from "react";
 function uid() { return Math.random().toString(36).slice(2, 10); }
 function now() { return new Date().toISOString(); }
 function defaultStore() {
-  return { vendors: [], clients: [], inventory: [], rfps: [], invoices: [], activityLog: [] };
+  return { vendors: [], clients: [], inventory: [], rfps: [], invoices: [], activityLog: [],
+    company: { name: "Pura Research Labs LLC", email: "phil@puraresearchlabs.com", phone: "+1-239-506-3434", address: "1242 SW Pine Island Rd, Suite 42-291, Cape Coral, FL 33991 USA", website: "" }
+  };
 }
 
 function generateBarcodeSVG(text, width = 280, height = 80) {
@@ -181,11 +183,36 @@ function Lbl({children}){return <div style={{fontSize:10,color:T.textDim,fontFam
 function Chip({children,color}){return <span style={{background:color+"22",border:`1px solid ${color}44`,color,borderRadius:20,padding:"3px 10px",fontSize:11,fontWeight:600}}>{children}</span>;}
 function SBadge({status}){const s=getSC(T)[status]||{color:T.textMid,bg:T.textMid+"28"};return <span style={{background:s.bg,color:s.color,borderRadius:T.radiusFull||100,padding:"3px 10px",fontSize:10,fontWeight:600,fontFamily:T.mono,border:`1px solid ${s.color}33`,letterSpacing:0.3}}>{status}</span>;}
 
-function AdminPanel({themeMode,setThemeMode,fontChoice,setFontChoice}){
+function AdminPanel({themeMode,setThemeMode,fontChoice,setFontChoice,company,setCompany}){
+  const [co,setCo]=useState({...company});
+  function saveCompany(){setCompany(co);showToastGlobal("Company details saved");}
+  function showToastGlobal(msg){/* handled by parent */}
+
   return(
     <div style={{padding:"40px 48px",maxWidth:640}}>
       <div style={{fontSize:11,color:T.accent,fontFamily:T.mono,letterSpacing:3,textTransform:"uppercase",marginBottom:6}}>System Configuration</div>
       <h1 style={{fontSize:26,fontWeight:700,color:T.text,marginBottom:32}}>Admin Settings</h1>
+
+      {/* Company Info */}
+      <div style={{background:T.bgCard,border:`1px solid ${T.border}`,borderRadius:T.radiusLg,padding:"28px 32px",marginBottom:24}}>
+        <div style={{fontSize:14,fontWeight:700,color:T.text,marginBottom:4}}>Company Information</div>
+        <div style={{fontSize:13,color:T.textMid,marginBottom:20}}>Used on Quote Request Forms, Invoices, and other documents.</div>
+        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:14,marginBottom:16}}>
+          {[
+            {k:"name",l:"Company Name",ph:"e.g. Pura Research Labs LLC",span:true},
+            {k:"email",l:"Company Email",ph:"billing@company.com"},
+            {k:"phone",l:"Phone Number",ph:"(555) 000-0000"},
+            {k:"address",l:"Address",ph:"123 Main St, City, State ZIP"},
+            {k:"website",l:"Website",ph:"https://company.com"},
+          ].map(f=>(
+            <div key={f.k} style={f.span?{gridColumn:"1/-1"}:{}}>
+              <Lbl>{f.l}</Lbl>
+              <input value={co[f.k]||""} onChange={e=>setCo(c=>({...c,[f.k]:e.target.value}))} placeholder={f.ph} style={IS}/>
+            </div>
+          ))}
+        </div>
+        <Btn primary onClick={()=>setCompany(co)}>Save Company Details</Btn>
+      </div>
       <div style={{background:T.bgCard,border:`1px solid ${T.border}`,borderRadius:T.radiusLg,padding:"28px 32px",marginBottom:24}}>
         <div style={{fontSize:14,fontWeight:700,color:T.text,marginBottom:4}}>Appearance</div>
         <div style={{fontSize:13,color:T.textMid,marginBottom:20}}>Choose between a dark or light background theme.</div>
@@ -736,7 +763,8 @@ function Vendors({store,update,log,showToast}){
 }
 
 // ── PDF Export for Quote Request Form ────────────────────────────────────────
-function downloadRFPpdf(rfp, vendor, companyNotes) {
+function downloadRFPpdf(rfp, vendor, companyNotes, company) {
+  const co = company || { name: "Pura Research Labs LLC", email: "phil@puraresearchlabs.com", phone: "+1-239-506-3434", address: "1242 SW Pine Island Rd, Suite 42-291, Cape Coral, FL 33991 USA" };
   const date = new Date(rfp.createdAt).toLocaleDateString("en-US",{year:"numeric",month:"long",day:"numeric"});
   const refNum = rfp.id.slice(0,8).toUpperCase();
 
@@ -804,8 +832,11 @@ function downloadRFPpdf(rfp, vendor, companyNotes) {
     </div>
     <div style="padding:18px 32px;">
       <div style="font-size:9px;color:#718096;letter-spacing:2px;font-weight:700;margin-bottom:8px;">REQUESTED BY</div>
-      <div style="font-size:14px;font-weight:600;color:#1a202c;margin-bottom:3px;">InvTrack Pro</div>
-      <div style="font-size:12px;color:#4a5568;">Date Issued: ${date}</div>
+      <div style="font-size:14px;font-weight:700;color:#1a202c;margin-bottom:3px;">${co.name}</div>
+      ${co.email?`<div style="font-size:12px;color:#2b6cb0;margin-bottom:2px;">${co.email}</div>`:""}
+      ${co.phone?`<div style="font-size:12px;color:#4a5568;margin-bottom:2px;">${co.phone}</div>`:""}
+      ${co.address?`<div style="font-size:12px;color:#4a5568;margin-bottom:2px;">${co.address}</div>`:""}
+      <div style="font-size:12px;color:#4a5568;margin-top:4px;">Date Issued: ${date}</div>
       <div style="font-size:12px;color:#4a5568;margin-top:2px;">Quote valid for: 30 days</div>
       ${rfp.dueDate?`<div style="font-size:12px;color:#c53030;font-weight:600;margin-top:3px;">Please respond by: ${rfp.dueDate}</div>`:""}
     </div>
@@ -843,15 +874,7 @@ function downloadRFPpdf(rfp, vendor, companyNotes) {
         <tr><td style="padding:9px 0;font-size:14px;font-weight:700;color:#1a202c;">GRAND TOTAL</td>
             <td style="padding:9px 0;text-align:right;font-size:14px;font-weight:700;color:#2b6cb0;">$______________</td></tr>
       </table>
-      <div style="margin-top:10px;">
-        <div style="font-size:10px;color:#718096;margin-bottom:3px;">Lead Time / ETA:</div>
-        <div style="border-bottom:1px solid #cbd5e0;height:22px;"></div>
-      </div>
-      <div style="margin-top:8px;">
-        <div style="font-size:10px;color:#718096;margin-bottom:3px;">Notes / Conditions:</div>
-        <div style="border-bottom:1px solid #cbd5e0;height:22px;margin-bottom:5px;"></div>
-        <div style="border-bottom:1px solid #cbd5e0;height:22px;"></div>
-      </div>
+
     </div>
     <div>
       <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:18px;margin-bottom:14px;">
@@ -868,15 +891,7 @@ function downloadRFPpdf(rfp, vendor, companyNotes) {
     </div>
   </div>
 
-  <!-- Signature -->
-  <div style="margin:0 32px 20px;border:1px solid #e2e8f0;border-radius:8px;padding:16px;background:#f8fafc;">
-    <div style="font-size:10px;color:#718096;letter-spacing:2px;font-weight:700;margin-bottom:12px;">VENDOR AUTHORIZATION</div>
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;">
-      <div><div style="font-size:10px;color:#718096;margin-bottom:3px;">Authorized Signature</div><div style="border-bottom:1px solid #cbd5e0;height:32px;"></div></div>
-      <div><div style="font-size:10px;color:#718096;margin-bottom:3px;">Printed Name &amp; Title</div><div style="border-bottom:1px solid #cbd5e0;height:32px;"></div></div>
-      <div><div style="font-size:10px;color:#718096;margin-bottom:3px;">Date</div><div style="border-bottom:1px solid #cbd5e0;height:32px;"></div></div>
-    </div>
-  </div>
+
 
   <!-- Footer -->
   <div style="background:#1a365d;padding:12px 32px;display:flex;justify-content:space-between;align-items:center;">
@@ -1037,7 +1052,7 @@ function RFPs({store,update,log,showToast}){
             <div style={{fontSize:11,color:T.textMid,fontFamily:T.mono,marginTop:4}}>#{rfp.id.slice(0,8).toUpperCase()} · {new Date(rfp.createdAt).toLocaleDateString()}</div>
           </div>
           <div style={{display:"flex",gap:8,flexWrap:"wrap",justifyContent:"flex-end"}}>
-            <Btn small onClick={()=>downloadRFPpdf(rfp,rfpV,rfp.notes)}>⬇ Download PDF</Btn>
+            <Btn small onClick={()=>downloadRFPpdf(rfp,rfpV,rfp.notes,store.company)}>⬇ Download PDF</Btn>
             <Btn small ghost onClick={startEdit}>✎ Edit</Btn>
             <Btn small danger onClick={()=>deleteRFP(rfp.id)}>Delete</Btn>
           </div>
@@ -1327,7 +1342,8 @@ function Clients({store,update,log,showToast}){
 }
 
 // ── Invoice PDF Export ────────────────────────────────────────────────────────
-function downloadInvoicePDF(inv, client, store) {
+function downloadInvoicePDF(inv, client, company) {
+  const co = company || { name: "Pura Research Labs LLC", email: "phil@puraresearchlabs.com", phone: "+1-239-506-3434", address: "1242 SW Pine Island Rd, Suite 42-291, Cape Coral, FL 33991 USA" };
   const date = new Date(inv.createdAt).toLocaleDateString("en-US",{year:"numeric",month:"long",day:"numeric"});
   const refNum = inv.id.slice(0,8).toUpperCase();
   const rows = inv.lines.map((l,i) =>
@@ -1377,8 +1393,11 @@ function downloadInvoicePDF(inv, client, store) {
     </div>
     <div style="padding:20px 36px;">
       <div style="font-size:10px;color:#718096;letter-spacing:2px;font-weight:700;margin-bottom:10px;">FROM</div>
-      <div style="font-size:14px;font-weight:600;color:#1a202c;margin-bottom:4px;">InvTrack Pro</div>
-      <div style="font-size:13px;color:#4a5568;">Invoice Date: ${date}</div>
+      <div style="font-size:14px;font-weight:700;color:#1a202c;margin-bottom:4px;">${co.name}</div>
+      ${co.email?`<div style="font-size:12px;color:#2b6cb0;margin-bottom:2px;">${co.email}</div>`:""}
+      ${co.phone?`<div style="font-size:12px;color:#4a5568;margin-bottom:2px;">${co.phone}</div>`:""}
+      ${co.address?`<div style="font-size:12px;color:#4a5568;margin-bottom:2px;">${co.address}</div>`:""}
+      <div style="font-size:13px;color:#4a5568;margin-top:4px;">Invoice Date: ${date}</div>
       ${inv.dueDate?`<div style="font-size:13px;color:#c53030;font-weight:600;margin-top:4px;">Due: ${inv.dueDate}</div>`:""}
     </div>
   </div>
@@ -1616,7 +1635,7 @@ function Invoices({store,update,log,showToast}){
             <div style={{fontSize:11,color:T.textMid,fontFamily:T.mono,marginTop:4}}>#{inv.id.slice(0,8).toUpperCase()} · {new Date(inv.createdAt).toLocaleDateString()}</div>
           </div>
           <div style={{display:"flex",gap:8,flexWrap:"wrap",justifyContent:"flex-end"}}>
-            <Btn small primary onClick={()=>downloadInvoicePDF(inv,invClient,store)}>⬇ Download PDF</Btn>
+            <Btn small primary onClick={()=>downloadInvoicePDF(inv,invClient,store.company)}>⬇ Download PDF</Btn>
             <Btn small ghost onClick={()=>{setDraft({clientId:inv.clientId,lines:inv.lines.map(l=>({...l})),taxRate:inv.taxRate||0,dueDate:inv.dueDate||"",notes:inv.notes||""});setMode("edit");}}>✎ Edit</Btn>
             <Btn small danger onClick={()=>deleteInvoice(inv.id)}>Delete</Btn>
           </div>
@@ -1812,7 +1831,19 @@ export default function App(){
   // Load persisted data on mount
   useEffect(()=>{
     Promise.all([loadFromStorage(),loadPrefs()]).then(([savedStore,prefs])=>{
-      if(savedStore)setStore(savedStore);
+      if(savedStore){
+        // Auto-fix bad SKUs: if a SKU contains spaces or is longer than 20 chars it's likely a catalog name not a real SKU
+        const cleaned={...savedStore,company:savedStore.company||{name:"Pura Research Labs LLC",email:"phil@puraresearchlabs.com",phone:"+1-239-506-3434",address:"1242 SW Pine Island Rd, Suite 42-291, Cape Coral, FL 33991 USA",website:""},vendors:(savedStore.vendors||[]).map(v=>({
+          ...v,
+          products:(v.products||[]).map(p=>{
+            const sku=p.sku||"";
+            const isBadSKU=sku.includes(" ")||sku.length>20;
+            return isBadSKU?{...p,sku:""}:p;
+          })
+        }))};
+        setStore(cleaned);
+        saveToStorage(cleaned);
+      }
       if(prefs){setThemeMode(prefs.themeMode||"dark");setFontChoice(prefs.fontChoice||"poppins");}
       setLoaded(true);
     });
@@ -1823,7 +1854,7 @@ export default function App(){
   IS=getIS(); TIER=getTIER(); SC=getSC(T); STATUS_COLORS=Object.fromEntries(Object.entries(SC).map(([k,v])=>[k,v.color]));
 
   const update=useCallback(fn=>setStore(s=>{
-    const copy={...s,vendors:[...s.vendors],clients:[...s.clients],inventory:[...s.inventory],rfps:[...s.rfps],invoices:[...s.invoices],activityLog:[...s.activityLog]};
+    const copy={...s,vendors:[...s.vendors],clients:[...s.clients],inventory:[...s.inventory],rfps:[...s.rfps],invoices:[...s.invoices],activityLog:[...s.activityLog],company:{...s.company}};
     const next=fn(copy);
     saveToStorage(next);
     return next;
@@ -1928,7 +1959,7 @@ export default function App(){
         {tab==="clients"&&<Clients store={store} update={update} log={log} showToast={showToast}/>}
         {tab==="invoices"&&<Invoices store={store} update={update} log={log} showToast={showToast}/>}
         {tab==="log"&&<ActivityLog store={store} update={update}/>}
-        {tab==="admin"&&<AdminPanel themeMode={themeMode} setThemeMode={setThemeModeAndSave} fontChoice={fontChoice} setFontChoice={setFontChoiceAndSave}/>}
+        {tab==="admin"&&<AdminPanel themeMode={themeMode} setThemeMode={setThemeModeAndSave} fontChoice={fontChoice} setFontChoice={setFontChoiceAndSave} company={store.company||{name:"Pura Research Labs LLC",email:"phil@puraresearchlabs.com",phone:"+1-239-506-3434",address:"1242 SW Pine Island Rd, Suite 42-291, Cape Coral, FL 33991 USA",website:""}} setCompany={co=>{update(s=>{s.company={...co};return s;});showToast("Company details saved");}}/>}
       </main>
 
       {toast&&<div style={{position:"fixed",bottom:28,right:28,zIndex:9999,background:T.bgPanel,border:`1px solid ${T.border}`,borderLeft:`3px solid ${toast.color}`,color:T.text,padding:"12px 18px",borderRadius:T.radius,fontSize:13,fontFamily:T.font,fontWeight:500,boxShadow:`0 8px 24px ${T.shadow}`,animation:"slide-in 0.2s ease",display:"flex",alignItems:"center",gap:10,maxWidth:360}}>
